@@ -21,11 +21,6 @@ type Respuesta struct {
 
 func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*events.APIGatewayProxyResponse, error) {
 
-	fmt.Println("Headers:")
-	for key, value := range request.Headers {
-		fmt.Printf("    %s: %s\n", key, value)
-	}
-
 	awsgo.InicializoAWS()
 
 	if validoParametros() == false {
@@ -34,7 +29,7 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 
 	var res *events.APIGatewayProxyResponse
 	path := request.RawPath
-	method := ""
+	method := request.RequestContext.HTTP.Method
 	body := request.Body
 
 	fmt.Println("----------------------------------------------------------------")
@@ -45,7 +40,7 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 
 	fmt.Println(request)
 	fmt.Printf("Body Size = %d.\n", len(request.Body))
-	fmt.Println("method = " + "")
+	fmt.Println("method = " + method)
 	fmt.Println(request.Body)
 
 	bd.ReadSecret()
