@@ -16,8 +16,6 @@ func SignUp(signupFields models.SignUp) error {
 		return err
 	}
 
-	fmt.Println("SignUp > Conexión exitosa a la BD ")
-
 	/* Armo INSERT para el registro */
 	sentencia := "INSERT INTO users (User_Email, User_Password, User_FirstName, User_LastName, User_DateAdd"
 
