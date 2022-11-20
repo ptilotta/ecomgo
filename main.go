@@ -24,8 +24,8 @@ func EjecutoLambda(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	}
 
 	bd.ReadSecret()
-	status, err := handlers.Manejadores()
-	return respuesta("Respuesta", status), err
+	status, message := handlers.Manejadores(request)
+	return respuesta(message, status), nil
 }
 
 func main() {
