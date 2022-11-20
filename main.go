@@ -24,7 +24,7 @@ func EjecutoLambda(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	}
 
 	bd.ReadSecret()
-	status, message := handlers.Manejadores(&request)
+	status, message := handlers.Manejadores(request.Path, request.HTTPMethod, request.Body)
 	return respuesta(message, status), nil
 }
 

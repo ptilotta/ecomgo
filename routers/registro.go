@@ -3,16 +3,14 @@ package routers
 import (
 	"encoding/json"
 
-	"github.com/aws/aws-lambda-go/events"
-
 	"github.com/ptilotta/ecomgo/bd"
 	"github.com/ptilotta/ecomgo/models"
 )
 
 /*Registro es la funcion para crear en la BD el registro de usuario */
-func Registro(event events.APIGatewayProxyRequest) (int, string) {
+func Registro(body string) (int, string) {
 	var t models.SignUp
-	err := json.Unmarshal([]byte(event.Body), &t)
+	err := json.Unmarshal([]byte(body), &t)
 
 	if err != nil {
 		return 400, "Error en los datos recibidos " + err.Error()
