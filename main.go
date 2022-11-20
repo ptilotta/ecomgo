@@ -14,6 +14,10 @@ import (
 
 func EjecutoLambda(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
+	path := request.Path
+	method := request.HTTPMethod
+	body := request.Body
+
 	fmt.Println(request)
 	fmt.Printf("Body Size = %d.\n", len(request.Body))
 	fmt.Println(request.Body)
@@ -24,7 +28,7 @@ func EjecutoLambda(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	}
 
 	bd.ReadSecret()
-	status, message := handlers.Manejadores(request.Path, request.HTTPMethod, request.Body)
+	status, message := handlers.Manejadores(path, method, body)
 	return respuesta(message, status), nil
 }
 
