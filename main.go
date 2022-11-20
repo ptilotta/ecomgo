@@ -19,7 +19,7 @@ type Respuesta struct {
 	Message string `json:"message"`
 }
 
-func EjecutoLambda(ctx context.Context, request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
+func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*events.APIGatewayProxyResponse, error) {
 
 	fmt.Println("Headers:")
 	for key, value := range request.Headers {
@@ -33,8 +33,8 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayProxyRequest) (
 	}
 
 	var res *events.APIGatewayProxyResponse
-	path := request.Path
-	method := request.HTTPMethod
+	path := request.RawPath
+	method := ""
 	body := request.Body
 
 	fmt.Println("----------------------------------------------------------------")
@@ -45,7 +45,7 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 	fmt.Println(request)
 	fmt.Printf("Body Size = %d.\n", len(request.Body))
-	fmt.Println("method = " + request.HTTPMethod)
+	fmt.Println("method = " + "")
 	fmt.Println(request.Body)
 
 	bd.ReadSecret()
