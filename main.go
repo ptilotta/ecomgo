@@ -18,6 +18,12 @@ func EjecutoLambda(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	method := request.HTTPMethod
 	body := request.Body
 
+	fmt.Println("----------------------------------------------------------------")
+	fmt.Println("path = " + path)
+	fmt.Println("method = " + method)
+	fmt.Println("body = " + body)
+	fmt.Println("----------------------------------------------------------------")
+
 	fmt.Println(request)
 	fmt.Printf("Body Size = %d.\n", len(request.Body))
 	fmt.Println(request.Body)
