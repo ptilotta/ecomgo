@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/ptilotta/ecomgo/awsgo"
 	"github.com/ptilotta/ecomgo/bd"
 	"github.com/ptilotta/ecomgo/handlers"
@@ -10,7 +12,11 @@ import (
 	lambda "github.com/aws/aws-lambda-go/lambda"
 )
 
-func EjecutoLambda() {
+func EjecutoLambda(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
+	fmt.Println(request)
+	fmt.Printf("Body Size = %d.\n", len(request.Body))
+	fmt.Println(request.Body)
 	awsgo.InicializoAWS()
 
 	if validoParametros() == false {
@@ -18,7 +24,8 @@ func EjecutoLambda() {
 	}
 
 	bd.ReadSecret()
-	handlers.Manejadores()
+	status, err := handlers.Manejadores()
+	return respuesta("Respuesta", status), err
 }
 
 func main() {
@@ -33,4 +40,8 @@ func validoParametros() bool {
 	}
 
 	return true
+}
+
+func respuesta(message string, status int) events.APIGatewayProxyResponse {
+	return events.APIGatewayProxyResponse{Body: message, StatusCode: status}
 }

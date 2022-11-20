@@ -11,7 +11,7 @@ import (
 )
 
 /*Manejadores seteo mi puerto, el Handler y pongo a escuchar al Servidor */
-func Manejadores() {
+func Manejadores() (int, error) {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/signup", routers.Registro).Methods("POST")
