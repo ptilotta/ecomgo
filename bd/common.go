@@ -13,30 +13,39 @@ import (
 
 // Se asignará 1 sola vez el valor y se compartirá por todos los archivos del mismo package, para no tener que leer x veces el secreto
 var SecretModel models.SecretRDSJson
+var Db *sql.DB
+
+// Funcion central de conexión a la BD
+func DbConnnect() error {
+
+	var err error
+	Db, err = sql.Open("mysql", ConnStr(SecretModel))
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+	defer Db.Close()
+	err = Db.Ping()
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+	fmt.Println("Conexión exitosa a la BD ")
+	return nil
+}
 
 func UserExists(email string) (error, bool) {
 	fmt.Println("Comienza UserExists")
 
-	/* Abro la base con las credenciales de root */
-	db, err := sql.Open("mysql", ConnStr(SecretModel))
+	err := DbConnnect()
 	if err != nil {
-		fmt.Println("UserExists > " + err.Error())
 		return err, false
 	}
-	defer db.Close()
-	err = db.Ping()
-	if err != nil {
-		fmt.Println("UserExists > " + err.Error())
-		return err, false
-	}
-	/*-------------------------------------------*/
-
-	fmt.Println("UserExists > Conexión exitosa a la BD ")
 
 	/* Armo INSERT para el registro */
 	sentencia := "SELECT 1 FROM users WHERE User_Email='" + email + "'"
 
-	rows, err := db.Query(sentencia)
+	rows, err := Db.Query(sentencia)
 	if err != nil {
 		return err, false
 	}

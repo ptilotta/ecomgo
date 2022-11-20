@@ -1,35 +1,20 @@
 package bd
 
 import (
-	"database/sql"
 	"fmt"
-	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ptilotta/ecomgo/models"
-	"github.com/ptilotta/ecomgo/secretm"
 	"github.com/ptilotta/ecomgo/tools"
 )
 
 func SignUp(signupFields models.SignUp) error {
 	fmt.Println("Comienza Registro")
 
-	// Capturo el Secreto y leo los valores de Secret Manager
-	claves := secretm.GetSecret(os.Getenv("SecretName"))
-
-	/* Abro la base con las credenciales de root */
-	db, err := sql.Open("mysql", ConnStr(claves))
+	err := DbConnnect()
 	if err != nil {
-		fmt.Println("SignUp > " + err.Error())
 		return err
 	}
-	defer db.Close()
-	err = db.Ping()
-	if err != nil {
-		fmt.Println("SignUp > " + err.Error())
-		return err
-	}
-	/*-------------------------------------------*/
 
 	fmt.Println("SignUp > Conexión exitosa a la BD ")
 
@@ -56,7 +41,7 @@ func SignUp(signupFields models.SignUp) error {
 
 	sentencia = sentencia + ")"
 
-	_, err = db.Exec(sentencia)
+	_, err = Db.Exec(sentencia)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
