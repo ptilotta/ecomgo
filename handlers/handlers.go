@@ -8,7 +8,7 @@ import (
 )
 
 /*Manejadores seteo mi puerto, el Handler y pongo a escuchar al Servidor */
-func Manejadores(event events.APIGatewayProxyRequest) (int, string) {
+func Manejadores(event *events.APIGatewayProxyRequest) (int, string) {
 
 	fmt.Println("event.Path = " + event.Path + " - event.HTTPMethod = " + event.HTTPMethod)
 
@@ -16,7 +16,7 @@ func Manejadores(event events.APIGatewayProxyRequest) (int, string) {
 	case "/signup":
 		if event.HTTPMethod == "POST" {
 			fmt.Println("Voy al routers.Registro(event)")
-			return routers.Registro(event)
+			return routers.Registro(*event)
 		}
 	}
 
