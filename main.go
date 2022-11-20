@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -12,8 +13,20 @@ import (
 	lambda "github.com/aws/aws-lambda-go/lambda"
 )
 
-func EjecutoLambda(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+type Respuesta struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
 
+func EjecutoLambda(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
+
+	awsgo.InicializoAWS()
+
+	if validoParametros() == false {
+		panic("Error en los parámetros. debe enviar 'SecretName'")
+	}
+
+	var res *events.APIGatewayProxyResponse
 	path := request.Path
 	method := request.HTTPMethod
 	body := request.Body
@@ -26,16 +39,21 @@ func EjecutoLambda(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 
 	fmt.Println(request)
 	fmt.Printf("Body Size = %d.\n", len(request.Body))
+	fmt.Println("method = " + request.HTTPMethod)
 	fmt.Println(request.Body)
-	awsgo.InicializoAWS()
-
-	if validoParametros() == false {
-		panic("Error en los parámetros. debe enviar 'SecretName'")
-	}
 
 	bd.ReadSecret()
 	status, message := handlers.Manejadores(path, method, body)
-	return respuesta(message, status), nil
+	mensaje, _ := json.Marshal(&Respuesta{
+		Status:  string(status),
+		Message: message,
+	})
+
+	res = &events.APIGatewayProxyResponse{
+		StatusCode: status,
+		Body:       string(mensaje),
+	}
+	return res, nil
 }
 
 func main() {
@@ -52,6 +70,6 @@ func validoParametros() bool {
 	return true
 }
 
-func respuesta(message string, status int) events.APIGatewayProxyResponse {
+func respuesta(message string, status int) *events.APIGatewayProxyResponse {
 	return events.APIGatewayProxyResponse{Body: message, StatusCode: status}
 }
