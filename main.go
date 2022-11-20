@@ -38,11 +38,6 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 	fmt.Println("body = " + body)
 	fmt.Println("----------------------------------------------------------------")
 
-	fmt.Println(request)
-	fmt.Printf("Body Size = %d.\n", len(request.Body))
-	fmt.Println("method = " + method)
-	fmt.Println(request.Body)
-
 	bd.ReadSecret()
 	status, message := handlers.Manejadores(path, method, body)
 	mensaje, _ := json.Marshal(&Respuesta{
