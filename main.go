@@ -69,7 +69,3 @@ func validoParametros() bool {
 
 	return true
 }
-
-func respuesta(message string, status int) *events.APIGatewayProxyResponse {
-	return events.APIGatewayProxyResponse{Body: message, StatusCode: status}
-}
