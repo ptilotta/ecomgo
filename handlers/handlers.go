@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"net/http"
+	"fmt"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/ptilotta/ecomgo/routers"
@@ -10,9 +10,12 @@ import (
 /*Manejadores seteo mi puerto, el Handler y pongo a escuchar al Servidor */
 func Manejadores(event events.APIGatewayProxyRequest) (int, string) {
 
+	fmt.Println("event.Path = " + event.Path + " - event.HTTPMethod = " + event.HTTPMethod)
+
 	switch event.Path {
 	case "/signup":
-		if event.HTTPMethod == http.MethodPost {
+		if event.HTTPMethod == "POST" {
+			fmt.Println("Voy al routers.Registro(event)")
 			return routers.Registro(event)
 		}
 	}
