@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -14,11 +15,16 @@ import (
 )
 
 type Respuesta struct {
-	Status  string `json:"status"`
+	Status  int    `json:"status"`
 	Message string `json:"message"`
 }
 
-func EjecutoLambda(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
+func EjecutoLambda(ctx context.Context, request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
+
+	fmt.Println("Headers:")
+	for key, value := range request.Headers {
+		fmt.Printf("    %s: %s\n", key, value)
+	}
 
 	awsgo.InicializoAWS()
 
@@ -45,7 +51,7 @@ func EjecutoLambda(request events.APIGatewayProxyRequest) (*events.APIGatewayPro
 	bd.ReadSecret()
 	status, message := handlers.Manejadores(path, method, body)
 	mensaje, _ := json.Marshal(&Respuesta{
-		Status:  string(status),
+		Status:  status,
 		Message: message,
 	})
 
