@@ -15,6 +15,7 @@ func SignUp(signupFields models.SignUp) error {
 	if err != nil {
 		return err
 	}
+	defer Db.Close()
 
 	/* Armo INSERT para el registro */
 	sentencia := "INSERT INTO users (User_Email, User_Password, User_FirstName, User_LastName, User_DateAdd"

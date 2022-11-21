@@ -24,7 +24,6 @@ func DbConnnect() error {
 		fmt.Println(err.Error())
 		return err
 	}
-	defer Db.Close()
 	err = Db.Ping()
 	if err != nil {
 		fmt.Println(err.Error())
@@ -41,6 +40,7 @@ func UserExists(email string) (error, bool) {
 	if err != nil {
 		return err, false
 	}
+	defer Db.Close()
 
 	/* Armo INSERT para el registro */
 	sentencia := "SELECT 1 FROM users WHERE User_Email='" + email + "'"
