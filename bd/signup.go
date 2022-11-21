@@ -21,7 +21,9 @@ func SignUp(signupFields models.SignUp) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println("password : " + string(password))
 	pwd := string(password[:])
+	fmt.Println("pwd : " + pwd)
 
 	/* Armo INSERT para el registro */
 	sentencia := "INSERT INTO users (User_Email, User_Password, User_FirstName, User_LastName, User_DateAdd"
