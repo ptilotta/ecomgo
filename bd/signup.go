@@ -17,6 +17,12 @@ func SignUp(signupFields models.SignUp) error {
 	}
 	defer Db.Close()
 
+	password, err := tools.Encrypt(signupFields.UserPassword)
+	if err != nil {
+		return err
+	}
+	pwd := string(password[:])
+
 	/* Armo INSERT para el registro */
 	sentencia := "INSERT INTO users (User_Email, User_Password, User_FirstName, User_LastName, User_DateAdd"
 
@@ -28,7 +34,7 @@ func SignUp(signupFields models.SignUp) error {
 
 	/* ------------------ */
 
-	sentencia = sentencia + ") VALUES ('" + signupFields.UserEmail + "','" + signupFields.UserPassword + "','" + signupFields.UserFirstName + "','" + signupFields.UserLastName + "','" + tools.FechaMySQL() + "'"
+	sentencia = sentencia + ") VALUES ('" + signupFields.UserEmail + "','" + pwd + "','" + signupFields.UserFirstName + "','" + signupFields.UserLastName + "','" + tools.FechaMySQL() + "'"
 
 	/* Campos Opcionales */
 
