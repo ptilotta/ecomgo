@@ -24,13 +24,16 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 	awsgo.InicializoAWS()
 
 	if validoParametros() == false {
-		panic("Error en los parámetros. debe enviar 'SecretName'")
+		panic("Error en los parámetros. debe enviar 'SecretName', 'UserPoolID', 'Region'")
 	}
 
 	var res *events.APIGatewayProxyResponse
 	path := request.RawPath
 	method := request.RequestContext.HTTP.Method
 	body := request.Body
+	headers := request.Headers
+	userPoolID := os.Getenv("UserPoolID")
+	region := os.Getenv("Region")
 
 	fmt.Println("----------------------------------------------------------------")
 	fmt.Println("path = " + path)
@@ -39,7 +42,7 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 	fmt.Println("----------------------------------------------------------------")
 
 	bd.ReadSecret()
-	status, message := handlers.Manejadores(path, method, body)
+	status, message := handlers.Manejadores(path, method, body, headers, userPoolID, region)
 	mensaje, _ := json.Marshal(&Respuesta{
 		Status:  status,
 		Message: message,
@@ -59,6 +62,16 @@ func main() {
 func validoParametros() bool {
 	var traeParametro bool
 	_, traeParametro = os.LookupEnv("SecretName")
+	if traeParametro == false {
+		return false
+	}
+
+	_, traeParametro = os.LookupEnv("UserPoolID")
+	if traeParametro == false {
+		return false
+	}
+
+	_, traeParametro = os.LookupEnv("Region")
 	if traeParametro == false {
 		return false
 	}

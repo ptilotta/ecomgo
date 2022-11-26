@@ -1,6 +1,10 @@
 package models
 
-//SecretRDSJson es la estructura que devuelve Secret Manager
+import (
+	jwt "github.com/dgrijalva/jwt-go"
+)
+
+// SecretRDSJson es la estructura que devuelve Secret Manager
 type SecretRDSJson struct {
 	Username            string `json:"username"`
 	Password            string `json:"password"`
@@ -10,11 +14,17 @@ type SecretRDSJson struct {
 	DbClusterIdentifier string `json:"dbClusterIdentifier"`
 }
 
-//Signup es la estructura que contiene los datos del registro
-type SignUp struct {
+// Signup es la estructura que contiene los datos del registro
+type User struct {
 	UserEmail     string `json:"UserEmail"`
-	UserPassword  string `json:"UserPassword"`
 	UserFirstName string `json:"UserFirstName"`
 	UserLastName  string `json:"UserLastName"`
-	UserBirdDate  string `json:"UserBirdDate,omitempty"`
+	UserUUID      string `json:"UserUUID"`
+}
+
+/*Claim es la estructura usada para procesar el JWT*/
+type Claim struct {
+	Email    string `json:"email"`
+	Expirate int64  `json:"exp"`
+	jwt.StandardClaims
 }

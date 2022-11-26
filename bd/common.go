@@ -2,9 +2,13 @@ package bd
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
+
+	"github.com/golang-jwt/jwt"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ptilotta/ecomgo/models"
@@ -14,6 +18,8 @@ import (
 // Se asignará 1 sola vez el valor y se compartirá por todos los archivos del mismo package, para no tener que leer x veces el secreto
 var SecretModel models.SecretRDSJson
 var Db *sql.DB
+var Email string
+var Expirate int64
 
 // Funcion central de conexión a la BD
 func DbConnnect() error {
@@ -33,6 +39,7 @@ func DbConnnect() error {
 	return nil
 }
 
+// UserExists chequea si un email ya se encuentra en la tabla users
 func UserExists(email string) (error, bool) {
 	fmt.Println("Comienza UserExists")
 
@@ -65,4 +72,34 @@ func UserExists(email string) (error, bool) {
 func ReadSecret() {
 	// Capturo el Secreto y leo los valores de Secret Manager
 	SecretModel = secretm.GetSecret(os.Getenv("SecretName"))
+}
+
+// ProcesoToken proceso token para extraer sus valores
+func ProcesoToken(tk string) (*models.Claim, bool, error) {
+	miClave := []byte("")
+	claims := &models.Claim{}
+
+	fmt.Println("token = " + tk)
+	splitToken := strings.Split(tk, "Bearer")
+	if len(splitToken) != 2 {
+		return claims, false, errors.New("formato de token invalido")
+	}
+
+	tk = strings.TrimSpace(splitToken[1])
+
+	tkn, err := jwt.ParseWithClaims(tk, claims, func(token *jwt.Token) (interface{}, error) {
+		return miClave, nil
+	})
+	if err == nil {
+		_, encontrado := UserExists(claims.Email)
+		if encontrado == true {
+			Email = claims.Email
+			Expirate = claims.Expirate
+		}
+		return claims, encontrado, nil
+	}
+	if !tkn.Valid {
+		return claims, false, errors.New("token Inválido")
+	}
+	return claims, false, err
 }
