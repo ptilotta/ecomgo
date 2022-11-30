@@ -79,12 +79,6 @@ func ProcesoToken(tk string) (*models.Claim, bool, error) {
 	claims := &models.Claim{}
 
 	fmt.Println("token = " + tk)
-	/*splitToken := strings.Split(tk, "Bearer")
-	if len(splitToken) != 2 {
-		return claims, false, errors.New("formato de token invalido")
-	}
-
-	tk = strings.TrimSpace(splitToken[1]) */
 
 	tkn, err := jwt.ParseWithClaims(tk, claims, func(token *jwt.Token) (interface{}, error) {
 		return miClave, nil
