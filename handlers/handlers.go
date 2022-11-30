@@ -20,7 +20,7 @@ func Manejadores(path string, method string, body string, headers map[string]str
 		err := tools.ValidateJWT(headers["authorization"], userPoolId, region)
 		if err != nil {
 			fmt.Println("Error : JWT Inválido")
-			return 400, "Error : JWT Inválido"
+			return 400, err.Error()
 		}
 
 		if method == "POST" {
