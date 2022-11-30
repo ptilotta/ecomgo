@@ -66,11 +66,11 @@ func NewAuth(config *Config) *Auth {
 		cognitoRegion:     config.CognitoRegion,
 		cognitoUserPoolID: config.CognitoUserPoolID,
 	}
-
+	fmt.Println("Entré en NewAuth")
 	a.jwkURL = fmt.Sprintf("https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", a.cognitoRegion, a.cognitoUserPoolID)
 	err := a.CacheJWK()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error en NewAuth " + err.Error())
 	}
 
 	return a
@@ -80,6 +80,7 @@ func NewAuth(config *Config) *Auth {
 func (a *Auth) CacheJWK() error {
 	req, err := http.NewRequest("GET", a.jwkURL, nil)
 	if err != nil {
+		log.Fatal("Error en CacheJSW " + err.Error())
 		return err
 	}
 
@@ -87,18 +88,21 @@ func (a *Auth) CacheJWK() error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
+		log.Fatal("Error en CacheJSW req.Header.Add > " + err.Error())
 		return err
 	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		log.Fatal("Error en CacheJSW ioutil.ReadAll > " + err.Error())
 		return err
 	}
 
 	jwk := new(JWK)
 	err = json.Unmarshal(body, jwk)
 	if err != nil {
+		log.Fatal("Error en CacheJSW json.Unmarshal > " + err.Error())
 		return err
 	}
 
@@ -113,6 +117,7 @@ func (a *Auth) ParseJWT(tokenString string) (*jwt.Token, error) {
 		return key, nil
 	})
 	if err != nil {
+		log.Fatal("Error en ParseJWT > " + err.Error())
 		return token, err
 	}
 
@@ -133,6 +138,7 @@ func (a *Auth) JWKURL() string {
 func convertKey(rawE, rawN string) *rsa.PublicKey {
 	decodedE, err := base64.RawURLEncoding.DecodeString(rawE)
 	if err != nil {
+		log.Fatal("Error en ConvertKey - base64.RawURLEncoding.DecodeString > " + err.Error())
 		panic(err)
 	}
 	if len(decodedE) < 4 {
@@ -146,6 +152,7 @@ func convertKey(rawE, rawN string) *rsa.PublicKey {
 	}
 	decodedN, err := base64.RawURLEncoding.DecodeString(rawN)
 	if err != nil {
+		log.Fatal("Error en ConvertKey - base64.RawURLEncoding.DecodeString > " + err.Error())
 		panic(err)
 	}
 	pubKey.N.SetBytes(decodedN)
@@ -161,11 +168,13 @@ func ValidateJWT(token string, userPoolId string, region string) error {
 
 	err := auth.CacheJWK()
 	if err != nil {
+		log.Fatal("Error en ValidateJTW - auth.CacheJWT > " + err.Error())
 		return err
 	}
 
 	tok, err := auth.ParseJWT(token)
 	if err != nil {
+		log.Fatal("Error en ValidateJTW - auth.ParseJWT > " + err.Error())
 		return err
 	}
 
