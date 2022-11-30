@@ -17,10 +17,6 @@ func UpdateUser(UFields models.User) error {
 	}
 	defer Db.Close()
 
-	/* if cognito.ValidateJWT(token) {
-
-	} */
-
 	/* Armo UPDATE para el registro */
 	sentencia := "UPDATE users SET User_FirstName='" + UFields.UserFirstName + "', User_LastName='" + UFields.UserLastName +
 		"', User_DateUpg='" + tools.FechaMySQL() + "' WHERE User_Email='" + UFields.UserEmail + "'"
@@ -31,6 +27,6 @@ func UpdateUser(UFields models.User) error {
 		return err
 	}
 
-	fmt.Println("SignUp > Ejecución exitosa ")
+	fmt.Println("Update > Ejecución exitosa ")
 	return nil
 }
