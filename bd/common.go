@@ -2,7 +2,6 @@ package bd
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -80,7 +79,9 @@ func ProcesoToken(tk string) (*models.Claim, bool, error) {
 
 	fmt.Println("token = " + tk)
 
-	tkn, err := jwt.ParseWithClaims(tk, claims, func(token *jwt.Token) (interface{}, error) {
+	// tkn, err := jwt.ParseWithClaims(tk, claims, func(token *jwt.Token) (interface{}, error) {
+
+	_, err := jwt.ParseWithClaims(tk, claims, func(token *jwt.Token) (interface{}, error) {
 		return miClave, nil
 	})
 	if err == nil {
@@ -90,9 +91,12 @@ func ProcesoToken(tk string) (*models.Claim, bool, error) {
 			Expirate = claims.Expirate
 		}
 		return claims, encontrado, nil
+	} else {
+		fmt.Println("Error al hacer jwt.ParseWithClaims > " + err.Error())
+		return nil, false, err
 	}
-	if !tkn.Valid {
+	/* if !tkn.Valid {
 		return claims, false, errors.New("token Inválido")
 	}
-	return claims, false, err
+	return claims, false, err */
 }
