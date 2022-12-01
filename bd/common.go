@@ -82,7 +82,7 @@ func ProcesoToken(tk string) (*models.Claim, bool, error) {
 	// tkn, err := jwt.ParseWithClaims(tk, claims, func(token *jwt.Token) (interface{}, error) {
 
 	_, err := jwt.ParseWithClaims(tk, claims, func(token *jwt.Token) (interface{}, error) {
-		return miClave, nil
+		return []byte(miClave), nil
 	})
 	if err == nil {
 		_, encontrado := UserExists(claims.Email)
