@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
-	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ptilotta/ecomgo/models"
@@ -65,11 +64,12 @@ func UserExists(userUUID string) (error, bool) {
 		return err, false
 	}
 
-	var valor int
+	var valor string
+	rows.Next()
 	rows.Scan(&valor)
 
-	fmt.Println("UserExists > Ejecución exitosa - valor devuelto " + strconv.Itoa(valor))
-	if valor == 1 {
+	fmt.Println("UserExists > Ejecución exitosa - valor devuelto " + valor)
+	if valor == "1" {
 		return nil, true
 	} else {
 		return nil, false
