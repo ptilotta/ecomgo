@@ -101,6 +101,7 @@ func ProcesoToken(tk string, userPoolID string, region string) (string, bool, st
 		return []byte(miClave), nil
 	})
 
+	fmt.Println("Paso por aca 1")
 	var UserUUID string
 
 	if claims, ok := tkn.Claims.(*UserClaim); ok && tkn.Valid {
@@ -109,6 +110,8 @@ func ProcesoToken(tk string, userPoolID string, region string) (string, bool, st
 	} else {
 		fmt.Println(err)
 	}
+
+	fmt.Println("Paso por aca 2")
 
 	if err == nil {
 		fmt.Println("Irá a UserExists(claims.UserName)")
