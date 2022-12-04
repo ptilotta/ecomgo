@@ -17,7 +17,7 @@ import (
 // Se asignará 1 sola vez el valor y se compartirá por todos los archivos del mismo package, para no tener que leer x veces el secreto
 var SecretModel models.SecretRDSJson
 var Db *sql.DB
-var Email string
+var UserName string
 var Expirate int64
 
 // Funcion central de conexión a la BD
@@ -38,7 +38,7 @@ func DbConnnect() error {
 }
 
 // UserExists chequea si un email ya se encuentra en la tabla users
-func UserExists(email string) (error, bool) {
+func UserExists(userName string) (error, bool) {
 	fmt.Println("Comienza UserExists")
 
 	err := DbConnnect()
@@ -48,7 +48,7 @@ func UserExists(email string) (error, bool) {
 	defer Db.Close()
 
 	/* Armo INSERT para el registro */
-	sentencia := "SELECT 1 FROM users WHERE User_Email='" + email + "'"
+	sentencia := "SELECT 1 FROM users WHERE User_UUID='" + userName + "'"
 
 	rows, err := Db.Query(sentencia)
 	if err != nil {
@@ -74,6 +74,9 @@ func ReadSecret() {
 
 // ProcesoToken proceso token para extraer sus valores
 func ProcesoToken(tk string, userPoolID string, region string) (*models.Claim, bool, string, error) {
+	fmt.Println("================================================================================================")
+	fmt.Println("Comienza ProcesoToken")
+	fmt.Println("================================================================================================")
 	miClave := []byte("8Xi/PEzDz4P6m9cRMLGZ7ilcxBHIdZfnEgEpw/q4IwA=")
 	claims := &models.Claim{}
 
@@ -81,14 +84,17 @@ func ProcesoToken(tk string, userPoolID string, region string) (*models.Claim, b
 		return miClave, nil
 	})
 	if err == nil {
-		_, encontrado := UserExists(claims.Email)
+		fmt.Println("Irá a UserExists(claims.UserName)")
+		fmt.Println(claims.UserName)
+		_, encontrado := UserExists(claims.UserName)
 		if encontrado == true {
-			Email = claims.Email
+			UserName = claims.UserName
 		}
 		return claims, encontrado, "", nil
 	}
 	if !tkn.Valid {
 		return claims, false, string(""), errors.New("token Inválido")
 	}
+	fmt.Println("================================================================================================")
 	return claims, false, string(""), err
 }

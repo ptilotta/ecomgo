@@ -24,7 +24,6 @@ type User struct {
 
 /*Claim es la estructura usada para procesar el JWT*/
 type Claim struct {
-	Email    string `json:"email"`
-	Expirate int64  `json:"exp"`
+	UserName string `json:"username"`
 	jwt.StandardClaims
 }
