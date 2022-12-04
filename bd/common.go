@@ -91,6 +91,8 @@ func ProcesoToken(tk string, userPoolID string, region string) (*models.Claim, b
 			UserName = claims.UserName
 		}
 		return claims, encontrado, "", nil
+	} else {
+		fmt.Println(err.Error())
 	}
 	if !tkn.Valid {
 		return claims, false, string(""), errors.New("token Inválido")
