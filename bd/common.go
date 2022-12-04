@@ -20,6 +20,11 @@ var Db *sql.DB
 var UserName string
 var Expirate int64
 
+var (
+	ErrInvalidToken = errors.New("token is invalid")
+	ErrExpiredToken = errors.New("token has expired")
+)
+
 type UserClaim struct {
 	UserName string `json:"username"`
 	jwt.RegisteredClaims
@@ -98,6 +103,10 @@ func ProcesoToken(tk string, userPoolID string, region string) (string, bool, st
 	miClave := "8Xi/PEzDz4P6m9cRMLGZ7ilcxBHIdZfnEgEpw/q4IwA="
 
 	tkn, err := jwt.ParseWithClaims(tk, &UserClaim{}, func(token *jwt.Token) (interface{}, error) {
+		_, ok := token.Method.(*jwt.SigningMethodRSA)
+		if !ok {
+			return nil, ErrInvalidToken
+		}
 		return []byte(miClave), nil
 	})
 
@@ -109,6 +118,7 @@ func ProcesoToken(tk string, userPoolID string, region string) (string, bool, st
 		UserUUID = claims.UserName
 	} else {
 		fmt.Println(err)
+		return "", false, err.Error(), err
 	}
 
 	fmt.Println("Paso por aca 2")
