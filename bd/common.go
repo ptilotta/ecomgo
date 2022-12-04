@@ -21,8 +21,21 @@ var UserName string
 var Expirate int64
 
 type UserClaim struct {
-	jwt.RegistreredClaims
 	UserName string `json:"username"`
+	jwt.RegisteredClaims
+}
+
+// ConnStr arma el String de conexión de la base de datos
+func ConnStr(claves models.SecretRDSJson) string {
+	var dbUser, authToken, dbEndpoint, dbName string
+
+	dbUser = claves.Username
+	dbEndpoint = fmt.Sprintf("%s:%d", claves.Host, claves.Port)
+	dbName = "ecommerce"
+	authToken = claves.Password
+	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?allowCleartextPasswords=true", dbUser, authToken, dbEndpoint, dbName)
+	fmt.Println(dsn)
+	return dsn
 }
 
 // Funcion central de conexión a la BD
@@ -78,30 +91,39 @@ func ReadSecret() {
 }
 
 // ProcesoToken proceso token para extraer sus valores
-func ProcesoToken(tk string, userPoolID string, region string) (UserClaim, bool, string, error) {
+func ProcesoToken(tk string, userPoolID string, region string) (string, bool, string, error) {
 	fmt.Println("================================================================================================")
 	fmt.Println("Comienza ProcesoToken")
 	fmt.Println("================================================================================================")
 	miClave := "8Xi/PEzDz4P6m9cRMLGZ7ilcxBHIdZfnEgEpw/q4IwA="
 
-	var userClaim UserClaim
-	tkn, err := jwt.ParseWithClaims(tk, &userClaim, func(token *jwt.Token) (interface{}, error) {
+	tkn, err := jwt.ParseWithClaims(tk, &UserClaim{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(miClave), nil
 	})
+
+	var UserUUID string
+
+	if claims, ok := tkn.Claims.(*UserClaim); ok && tkn.Valid {
+		fmt.Printf("%v %v", claims.UserName, claims.RegisteredClaims.Issuer)
+		UserUUID = claims.UserName
+	} else {
+		fmt.Println(err)
+	}
+
 	if err == nil {
 		fmt.Println("Irá a UserExists(claims.UserName)")
-		fmt.Println(userClaim.UserName)
-		_, encontrado := UserExists(userClaim.UserName)
+		fmt.Println(UserUUID)
+		_, encontrado := UserExists(UserUUID)
 		if encontrado == true {
-			UserName = userClaim.UserName
+			UserName = UserUUID
 		}
-		return userClaim, encontrado, "", nil
+		return UserUUID, encontrado, "", nil
 	} else {
 		fmt.Println(err.Error())
 	}
 	if !tkn.Valid {
-		return userClaim, false, string(""), errors.New("token Inválido")
+		return UserUUID, false, string(""), errors.New("token Inválido")
 	}
 	fmt.Println("================================================================================================")
-	return userClaim, false, string(""), err
+	return UserUUID, false, string(""), err
 }
