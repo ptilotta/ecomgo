@@ -2,11 +2,10 @@ package bd
 
 import (
 	"database/sql"
+	b64 "encoding/base64"
 	"fmt"
 	"os"
 	"strconv"
-
-	"github.com/golang-jwt/jwt"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ptilotta/ecomgo/models"
@@ -74,17 +73,16 @@ func ReadSecret() {
 
 // ProcesoToken proceso token para extraer sus valores
 func ProcesoToken(tk string) (*models.Claim, bool, error) {
-	miClave := []byte("")
 	claims := &models.Claim{}
 
 	fmt.Println("token = " + tk)
 
 	// tkn, err := jwt.ParseWithClaims(tk, claims, func(token *jwt.Token) (interface{}, error) {
 
-	_, err := jwt.ParseWithClaims(tk, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(miClave), nil
-	})
-	if err == nil {
+	token, err := b64.URLEncoding.DecodeString(tk)
+	fmt.Println(token)
+
+	/*if err == nil {
 		_, encontrado := UserExists(claims.Email)
 		if encontrado == true {
 			Email = claims.Email
@@ -97,6 +95,6 @@ func ProcesoToken(tk string) (*models.Claim, bool, error) {
 	}
 	/* if !tkn.Valid {
 		return claims, false, errors.New("token Inválido")
-	}
-	return claims, false, err */
+	} */
+	return claims, false, err
 }
