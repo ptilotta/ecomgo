@@ -17,7 +17,7 @@ func Manejadores(path string, method string, body string, headers map[string]str
 		for key, value := range headers {
 			fmt.Println("Key: ", key, "Value: ", value)
 		}
-		_, status, err := bd.ProcesoToken(headers["authorization"])
+		_, status, _, err := bd.ProcesoToken(headers["authorization"], userPoolId, region)
 		if err != nil {
 			return 400, err.Error()
 		}

@@ -2,10 +2,12 @@ package bd
 
 import (
 	"database/sql"
-	b64 "encoding/base64"
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
+
+	"github.com/golang-jwt/jwt"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ptilotta/ecomgo/models"
@@ -20,7 +22,6 @@ var Expirate int64
 
 // Funcion central de conexión a la BD
 func DbConnnect() error {
-
 	var err error
 	Db, err = sql.Open("mysql", ConnStr(SecretModel))
 	if err != nil {
@@ -72,29 +73,22 @@ func ReadSecret() {
 }
 
 // ProcesoToken proceso token para extraer sus valores
-func ProcesoToken(tk string) (*models.Claim, bool, error) {
+func ProcesoToken(tk string, userPoolID string, region string) (*models.Claim, bool, string, error) {
+	miClave := []byte("8Xi/PEzDz4P6m9cRMLGZ7ilcxBHIdZfnEgEpw/q4IwA=")
 	claims := &models.Claim{}
 
-	fmt.Println("token = " + tk)
-
-	// tkn, err := jwt.ParseWithClaims(tk, claims, func(token *jwt.Token) (interface{}, error) {
-
-	token, err := b64.URLEncoding.DecodeString(tk)
-	fmt.Println(token)
-
-	/*if err == nil {
+	tkn, err := jwt.ParseWithClaims(tk, claims, func(token *jwt.Token) (interface{}, error) {
+		return miClave, nil
+	})
+	if err == nil {
 		_, encontrado := UserExists(claims.Email)
 		if encontrado == true {
 			Email = claims.Email
-			Expirate = claims.Expirate
 		}
-		return claims, encontrado, nil
-	} else {
-		fmt.Println("Error al hacer jwt.ParseWithClaims > " + err.Error())
-		return nil, false, err
+		return claims, encontrado, "", nil
 	}
-	/* if !tkn.Valid {
-		return claims, false, errors.New("token Inválido")
-	} */
-	return claims, false, err
+	if !tkn.Valid {
+		return claims, false, string(""), errors.New("token Inválido")
+	}
+	return claims, false, string(""), err
 }

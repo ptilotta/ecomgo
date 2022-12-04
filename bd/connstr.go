@@ -6,6 +6,7 @@ import (
 	"github.com/ptilotta/ecomgo/models"
 )
 
+// ConnStr arma el String de conexión de la base de datos
 func ConnStr(claves models.SecretRDSJson) string {
 	var dbUser, authToken, dbEndpoint, dbName string
 
