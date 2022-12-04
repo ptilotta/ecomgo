@@ -24,15 +24,19 @@ func UpdateUser(body string) (int, string) {
 		return 400, "Debe especificar el Apellido (LastName) del Usuario"
 	}
 
-	_, encontrado := bd.UserExists(t.UserEmail)
-	if encontrado == true {
-		return 400, "Ya existe un usuario registrado con ese email"
+	if len(t.UserUUID) == 0 {
+		return 400, "Debe especificar el UUID del Usuario (dato username en Cognito)"
+	}
+
+	_, encontrado := bd.UserExists(t.UserUUID)
+	if encontrado == false {
+		return 400, "No existe un usuario registrado con ese UUID"
 	}
 
 	err = bd.UpdateUser(t)
 	if err != nil {
-		return 400, "Ocurrió un error al intentar realizar el registro de usuario " + err.Error()
+		return 400, "Ocurrió un error al intentar realizar el registro del usuario " + t.UserUUID + " > " + err.Error()
 	}
 
-	return 200, "SignUp OK"
+	return 200, "UpdateUser OK"
 }

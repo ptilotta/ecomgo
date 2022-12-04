@@ -1,9 +1,5 @@
 package models
 
-import (
-	jwt "github.com/dgrijalva/jwt-go"
-)
-
 // SecretRDSJson es la estructura que devuelve Secret Manager
 type SecretRDSJson struct {
 	Username            string `json:"username"`
@@ -20,10 +16,4 @@ type User struct {
 	UserFirstName string `json:"UserFirstName"`
 	UserLastName  string `json:"UserLastName"`
 	UserUUID      string `json:"UserUUID"`
-}
-
-/*Claim es la estructura usada para procesar el JWT*/
-type Claim struct {
-	UserName string `json:"username"`
-	jwt.StandardClaims
 }

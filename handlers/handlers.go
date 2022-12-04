@@ -3,7 +3,6 @@ package handlers
 import (
 	"fmt"
 
-	"github.com/ptilotta/ecomgo/bd"
 	"github.com/ptilotta/ecomgo/routers"
 )
 
@@ -14,24 +13,6 @@ func Manejadores(path string, method string, body string, headers map[string]str
 
 	switch path {
 	case "/user/me":
-		for key, value := range headers {
-			fmt.Println("Key: ", key, "Value: ", value)
-		}
-		_, status, _, err := bd.ProcesoToken(headers["authorization"], userPoolId, region)
-		if err != nil {
-			return 400, err.Error()
-		}
-
-		if !status {
-			return 400, "JWT formato inválido"
-		}
-
-		/* err := tools.ValidateJWT(headers["authorization"], userPoolId, region)
-		if err != nil {
-			fmt.Println("Error : JWT Inválido")
-			return 400, err.Error()
-		} */
-
 		if method == "POST" {
 			fmt.Println("Voy al routers.UpdateUser(body)")
 			return routers.UpdateUser(body)

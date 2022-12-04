@@ -19,7 +19,7 @@ func UpdateUser(UFields models.User) error {
 
 	/* Armo UPDATE para el registro */
 	sentencia := "UPDATE users SET User_FirstName='" + UFields.UserFirstName + "', User_LastName='" + UFields.UserLastName +
-		"', User_DateUpg='" + tools.FechaMySQL() + "' WHERE User_Email='" + UFields.UserEmail + "'"
+		"', User_DateUpg='" + tools.FechaMySQL() + "' WHERE User_UUID='" + UFields.UserUUID + "'"
 
 	_, err = Db.Exec(sentencia)
 	if err != nil {

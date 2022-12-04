@@ -15,10 +15,3 @@ func FechaMySQL() string {
 		t.Year(), t.Month(), t.Day(),
 		t.Hour(), t.Minute(), t.Second())
 }
-
-/* URL para probar el token de Cognito
-https://cognito-idp.{region}.amazonaws.com/{userPoolId}/.well-known/jwks.json
-User Pool ID = us-east-1_ln0bNuRBv
-Region = us-east-1
-https://cognito-idp.us-east-1.amazonaws.com/us-east-1_ln0bNuRBv/.well-known/jwks.json
-*/
