@@ -59,7 +59,7 @@ func UserExists(userUUID string) (error, bool) {
 
 	/* Armo INSERT para el registro */
 	sentencia := "SELECT 1 FROM users WHERE User_UUID='" + userUUID + "'"
-
+	fmt.Println(sentencia)
 	rows, err := Db.Query(sentencia)
 	if err != nil {
 		return err, false
