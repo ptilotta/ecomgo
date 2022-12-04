@@ -103,7 +103,7 @@ func ProcesoToken(tk string, userPoolID string, region string) (string, bool, st
 	miClave := "8Xi/PEzDz4P6m9cRMLGZ7ilcxBHIdZfnEgEpw/q4IwA="
 
 	tkn, err := jwt.ParseWithClaims(tk, &UserClaim{}, func(token *jwt.Token) (interface{}, error) {
-		_, ok := token.Method.(*jwt.SigningMethodRSA)
+		_, ok := token.Method.(*jwt.SigningMethodRSAPSS)
 		if !ok {
 			return nil, ErrInvalidToken
 		}
