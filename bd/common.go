@@ -7,7 +7,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/golang-jwt/jwt"
+	jwt "github.com/golang-jwt/jwt/v4"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ptilotta/ecomgo/models"
@@ -19,6 +19,11 @@ var SecretModel models.SecretRDSJson
 var Db *sql.DB
 var UserName string
 var Expirate int64
+
+type UserClaim struct {
+	jwt.RegistreredClaims
+	UserName string `json:"username"`
+}
 
 // Funcion central de conexión a la BD
 func DbConnnect() error {
@@ -73,30 +78,30 @@ func ReadSecret() {
 }
 
 // ProcesoToken proceso token para extraer sus valores
-func ProcesoToken(tk string, userPoolID string, region string) (*models.Claim, bool, string, error) {
+func ProcesoToken(tk string, userPoolID string, region string) (UserClaim, bool, string, error) {
 	fmt.Println("================================================================================================")
 	fmt.Println("Comienza ProcesoToken")
 	fmt.Println("================================================================================================")
-	miClave := []byte("8Xi/PEzDz4P6m9cRMLGZ7ilcxBHIdZfnEgEpw/q4IwA=")
-	claims := &models.Claim{}
+	miClave := "8Xi/PEzDz4P6m9cRMLGZ7ilcxBHIdZfnEgEpw/q4IwA="
 
-	tkn, err := jwt.ParseWithClaims(tk, claims, func(token *jwt.Token) (interface{}, error) {
-		return miClave, nil
+	var userClaim UserClaim
+	tkn, err := jwt.ParseWithClaims(tk, &userClaim, func(token *jwt.Token) (interface{}, error) {
+		return []byte(miClave), nil
 	})
 	if err == nil {
 		fmt.Println("Irá a UserExists(claims.UserName)")
-		fmt.Println(claims.UserName)
-		_, encontrado := UserExists(claims.UserName)
+		fmt.Println(userClaim.UserName)
+		_, encontrado := UserExists(userClaim.UserName)
 		if encontrado == true {
-			UserName = claims.UserName
+			UserName = userClaim.UserName
 		}
-		return claims, encontrado, "", nil
+		return userClaim, encontrado, "", nil
 	} else {
 		fmt.Println(err.Error())
 	}
 	if !tkn.Valid {
-		return claims, false, string(""), errors.New("token Inválido")
+		return userClaim, false, string(""), errors.New("token Inválido")
 	}
 	fmt.Println("================================================================================================")
-	return claims, false, string(""), err
+	return userClaim, false, string(""), err
 }
