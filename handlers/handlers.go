@@ -13,9 +13,21 @@ func Manejadores(path string, method string, body string, headers map[string]str
 
 	switch path {
 	case "/default/ecommerce/user/me":
-		if method == "POST" {
+		switch method {
+		case "POST":
 			fmt.Println("Voy al routers.UpdateUser(body)")
 			return routers.UpdateUser(body)
+		case "GET":
+			fmt.Println("Voy al routers.SelectUser(body)")
+			return routers.SelectUser(body)
+		case "DELETE":
+			fmt.Println("Voy al routers.SelectUser(body)")
+			return routers.SelectUser(body)
+		}
+	case "/default/ecommerce/users":
+		if method == "GET" {
+			fmt.Println("Voy al routers.SelectUsers(body)")
+			return routers.SelectUsers(body)
 		}
 	}
 

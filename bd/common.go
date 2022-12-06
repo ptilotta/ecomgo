@@ -76,6 +76,36 @@ func UserExists(userUUID string) (error, bool) {
 	}
 }
 
+// UserExists chequea si un email ya se encuentra en la tabla users
+func UserIsAdmin(userUUID string) (error, bool) {
+	fmt.Println("Comienza UserIsAdmin")
+
+	err := DbConnnect()
+	if err != nil {
+		return err, false
+	}
+	defer Db.Close()
+
+	/* Armo SELECT para el registro chequeando si el Status = 0 (Admin) */
+	sentencia := "SELECT 1 FROM users WHERE User_UUID='" + userUUID + "' AND User_Status=0"
+	fmt.Println(sentencia)
+	rows, err := Db.Query(sentencia)
+	if err != nil {
+		return err, false
+	}
+
+	var valor string
+	rows.Next()
+	rows.Scan(&valor)
+
+	fmt.Println("UserIsAdmin > Ejecución exitosa - valor devuelto " + valor)
+	if valor == "1" {
+		return nil, true
+	} else {
+		return nil, false
+	}
+}
+
 // ReadSecret ejecuta GetSecret del módulo secretm y devuelve el modelo JSON a la variable Global SecretModel
 func ReadSecret() {
 	// Capturo el Secreto y leo los valores de Secret Manager

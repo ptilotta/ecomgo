@@ -10,10 +10,18 @@ type SecretRDSJson struct {
 	DbClusterIdentifier string `json:"dbClusterIdentifier"`
 }
 
-// Signup es la estructura que contiene los datos del registro
 type User struct {
-	UserEmail     string `json:"UserEmail"`
-	UserFirstName string `json:"UserFirstName"`
-	UserLastName  string `json:"UserLastName"`
-	UserUUID      string `json:"UserUUID"`
+	UserUUID      string `json:"user_uuid"`
+	UserEmail     string `json:"user_email"`
+	UserFirstName string `json:"user_firstname"`
+	UserLastName  string `json:"user_lastname"`
+	UserStatus    int    `json:"user_status"`
+	UserDateAdd   string `json:"user_dateadd"`
+	UserDateUpg   string `json:"user_dateupg"`
+	Page          int    `json:"page"`
+}
+
+type DeleteUser struct {
+	UserUUID_Admin string `json:"user_uuid_admin"`
+	UserUUID       string `json:"user_uuid"`
 }
