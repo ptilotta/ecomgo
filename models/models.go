@@ -21,7 +21,6 @@ type User struct {
 }
 
 type ListUsers struct {
-	UserUUID       string `json:"userUUID"`
 	UserUUID_Admin string `json:"userUUID_Admin"`
 	Page           int    `json:"page"`
 }

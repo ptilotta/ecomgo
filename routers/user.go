@@ -82,15 +82,11 @@ func SelectUsers(body string) (int, string) {
 		return 400, "Error en los datos recibidos " + err.Error()
 	}
 
-	if len(t.UserUUID) == 0 {
-		return 400, "Debe especificar el UUID del Usuario (dato username en Cognito)"
-	}
-
 	if t.Page == 0 {
 		t.Page = 1
 	}
 
-	_, encontrado := bd.UserIsAdmin(t.UserUUID)
+	_, encontrado := bd.UserIsAdmin(t.UserUUID_Admin)
 	if encontrado == false {
 		return 400, "No existe un usuario registrado con ese UUID, o no está configurado como Admin"
 	}
