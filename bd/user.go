@@ -56,7 +56,16 @@ func SelectUser(UFields models.User) (models.User, error) {
 		return User, err
 	}
 	rows.Next()
-	rows.Scan(&User.UserUUID, &User.UserEmail, &User.UserFirstName, &User.UserLastName, &User.UserStatus, &User.UserDateAdd, &User.UserDateUpg)
+
+	var firstName sql.NullString
+	var lastName sql.NullString
+	var dateUpg sql.NullTime
+	rows.Scan(&User.UserUUID, &User.UserEmail, &firstName, &lastName, &User.UserStatus, &User.UserDateAdd, &dateUpg)
+
+	User.UserFirstName = firstName.String
+	User.UserLastName = lastName.String
+	User.UserDateUpg = dateUpg.Time.String()
+
 	fmt.Println("Select User > Ejecución exitosa ")
 	return User, nil
 }
@@ -92,10 +101,17 @@ func SelectUsers(UFields models.ListUsers) ([]models.User, error) {
 	}
 	for rows.Next() {
 		var u models.User
-		err := rows.Scan(&u.UserUUID, &u.UserEmail, &u.UserFirstName, &u.UserLastName, &u.UserStatus, &u.UserDateAdd, &u.UserDateUpg)
+		var firstName sql.NullString
+		var lastName sql.NullString
+		var dateUpg sql.NullTime
+
+		err := rows.Scan(&u.UserUUID, &u.UserEmail, &firstName, &lastName, &u.UserStatus, &u.UserDateAdd, &dateUpg)
 		if err != nil {
 			return User, err
 		}
+		u.UserFirstName = firstName.String
+		u.UserLastName = lastName.String
+		u.UserDateUpg = dateUpg.Time.String()
 		User = append(User, u)
 	}
 
