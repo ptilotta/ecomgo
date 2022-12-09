@@ -11,13 +11,13 @@ type SecretRDSJson struct {
 }
 
 type User struct {
-	UserUUID      string `json:"user_uuid"`
-	UserEmail     string `json:"user_email"`
-	UserFirstName string `json:"user_firstname"`
-	UserLastName  string `json:"user_lastname"`
-	UserStatus    int    `json:"user_status"`
-	UserDateAdd   string `json:"user_dateadd"`
-	UserDateUpg   string `json:"user_dateupg"`
+	UserUUID      string `json:"userUUID"`
+	UserEmail     string `json:"userEmail"`
+	UserFirstName string `json:"userFirstName"`
+	UserLastName  string `json:"userLastName"`
+	UserStatus    int    `json:"userStatus"`
+	UserDateAdd   string `json:"userDateAdd"`
+	UserDateUpg   string `json:"userDateUpg"`
 	Page          int    `json:"page"`
 }
 
