@@ -24,7 +24,7 @@ func ConnStr(claves models.SecretRDSJson) string {
 	dbEndpoint = fmt.Sprintf("%s:%d", claves.Host, claves.Port)
 	dbName = "ecommerce"
 	authToken = claves.Password
-	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?allowCleartextPasswords=true,parseTime=true", dbUser, authToken, dbEndpoint, dbName)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?allowCleartextPasswords=true;parseTime=true", dbUser, authToken, dbEndpoint, dbName)
 	fmt.Println(dsn)
 	return dsn
 }
