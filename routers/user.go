@@ -75,7 +75,7 @@ func SelectUser(body string) (int, string) {
 
 /*SelectUsers es la funcion para obtener la lista de los usuarios en la base */
 func SelectUsers(body string) (int, string) {
-	var t models.User
+	var t models.ListUsers
 	err := json.Unmarshal([]byte(body), &t)
 
 	if err != nil {

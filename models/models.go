@@ -18,10 +18,15 @@ type User struct {
 	UserStatus    int    `json:"userStatus"`
 	UserDateAdd   string `json:"userDateAdd"`
 	UserDateUpg   string `json:"userDateUpg"`
-	Page          int    `json:"page"`
+}
+
+type ListUsers struct {
+	UserUUID       string `json:"userUUID"`
+	UserUUID_Admin string `json:"userUUID_Admin"`
+	Page           int    `json:"page"`
 }
 
 type DeleteUser struct {
-	UserUUID_Admin string `json:"user_uuid_admin"`
-	UserUUID       string `json:"user_uuid"`
+	UserUUID_Admin string `json:"userUUID_Admin"`
+	UserUUID       string `json:"userUUID"`
 }

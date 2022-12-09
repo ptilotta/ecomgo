@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strconv"
 
-	"errors"
-
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ptilotta/ecomgo/models"
 	"github.com/ptilotta/ecomgo/tools"
@@ -64,14 +62,9 @@ func SelectUser(UFields models.User) (models.User, error) {
 }
 
 // SelectUser Selecciona los datos de un usuario en particular
-func SelectUsers(UFields models.User) ([]models.User, error) {
+func SelectUsers(UFields models.ListUsers) ([]models.User, error) {
 	fmt.Println("Comienza SelectUser")
 	User := []models.User{}
-
-	if UFields.UserStatus != 0 {
-		err := errors.New("Only Admin User can list Users")
-		return User, err
-	}
 
 	err := DbConnnect()
 	if err != nil {
