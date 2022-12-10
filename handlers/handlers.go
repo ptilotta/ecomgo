@@ -22,7 +22,7 @@ func Manejadores(path string, method string, body string, headers map[string]str
 			return routers.SelectUser(body)
 		case "DELETE":
 			fmt.Println("Voy al routers.SelectUser(body)")
-			return routers.SelectUser(body)
+			return routers.DeleteUsers(body)
 		}
 	case "/default/ecommerce/users":
 		if method == "GET" {
