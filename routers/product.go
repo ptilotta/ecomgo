@@ -2,6 +2,7 @@ package routers
 
 import (
 	"encoding/json"
+	"strconv"
 
 	"github.com/ptilotta/ecomgo/bd"
 	"github.com/ptilotta/ecomgo/models"
@@ -20,10 +21,10 @@ func InsertProduct(body string) (int, string) {
 		return 400, "Debe especificar el Nombre (Title) del Producto"
 	}
 
-	err = bd.InsertProduct(t)
-	if err != nil {
+	result, err2 := bd.InsertProduct(t)
+	if err2 != nil {
 		return 400, "Ocurrió un error al intentar realizar el registro del producto " + t.ProdTitle + " > " + err.Error()
 	}
 
-	return 200, "InsertProduct OK"
+	return 200, "{ ProductID: " + strconv.Itoa(int(result)) + "}"
 }

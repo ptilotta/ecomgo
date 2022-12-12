@@ -1,6 +1,7 @@
 package bd
 
 import (
+	"database/sql"
 	"fmt"
 	"strconv"
 
@@ -8,12 +9,12 @@ import (
 	"github.com/ptilotta/ecomgo/models"
 )
 
-func InsertProduct(p models.Product) error {
+func InsertProduct(p models.Product) (int64, error) {
 	fmt.Println("Comienza Registro")
 
 	err := DbConnnect()
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer Db.Close()
 
@@ -40,12 +41,18 @@ func InsertProduct(p models.Product) error {
 
 	sentencia = sentencia + ")"
 
-	_, err = Db.Exec(sentencia)
+	var result sql.Result
+	result, err = Db.Exec(sentencia)
 	if err != nil {
 		fmt.Println(err.Error())
-		return err
+		return 0, err
+	}
+
+	LastInsertId, err2 := result.LastInsertId()
+	if err2 != nil {
+		return 0, err2
 	}
 
 	fmt.Println("Insert Product > Ejecución exitosa ")
-	return nil
+	return LastInsertId, err
 }
