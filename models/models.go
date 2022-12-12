@@ -29,3 +29,13 @@ type DeleteUser struct {
 	UserUUID_Admin string `json:"userUUID_Admin"`
 	UserUUID       string `json:"userUUID"`
 }
+
+type Product struct {
+	ProdID          int     `json:"prodID"`
+	ProdTitle       string  `json:"prodTitle"`
+	ProdDescription string  `json:"prodDescription"`
+	ProdCreatedAt   string  `json:"prodCreatedAt"`
+	ProdUpdated     string  `json:"prodUpdated"`
+	ProdPrice       float64 `json:"prodPrice,omitempty"`
+	ProdStatus      int     `json:"prodStatus"`
+}

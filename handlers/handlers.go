@@ -29,6 +29,12 @@ func Manejadores(path string, method string, body string, headers map[string]str
 			fmt.Println("Voy al routers.SelectUsers(body)")
 			return routers.SelectUsers(body)
 		}
+
+	case "/default/ecommerce/product":
+		if method == "POST" {
+			fmt.Println("Voy al routers.SelectUsers(body)")
+			return routers.InsertProduct(body)
+		}
 	}
 
 	return 200, "Todo OK"

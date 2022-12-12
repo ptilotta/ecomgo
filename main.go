@@ -23,7 +23,7 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 
 	awsgo.InicializoAWS()
 
-	if validoParametros() == false {
+	if !validoParametros() {
 		panic("Error en los parámetros. debe enviar 'SecretName', 'UserPoolID', 'Region'")
 	}
 
@@ -58,11 +58,19 @@ func main() {
 }
 
 func validoParametros() bool {
-	var traeParametro bool
-	_, traeParametro = os.LookupEnv("SecretName")
-	if traeParametro == false {
-		return false
+
+	_, traeParametro := os.LookupEnv("SecretName")
+	if !traeParametro {
+		return traeParametro
+	}
+	_, traeParametro = os.LookupEnv("UserPoolID")
+	if !traeParametro {
+		return traeParametro
+	}
+	_, traeParametro = os.LookupEnv("Region")
+	if !traeParametro {
+		return traeParametro
 	}
 
-	return true
+	return traeParametro
 }

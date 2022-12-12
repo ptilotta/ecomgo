@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ptilotta/ecomgo/models"
@@ -110,4 +111,11 @@ func UserIsAdmin(userUUID string) (error, bool) {
 func ReadSecret() {
 	// Capturo el Secreto y leo los valores de Secret Manager
 	SecretModel = secretm.GetSecret(os.Getenv("SecretName"))
+}
+
+// EscapeString quita comillas simples y dobles de un String
+func EscapeString(t string) string {
+	desc := strings.ReplaceAll(t, "'", "")
+	desc = strings.ReplaceAll(desc, "\"", "")
+	return desc
 }
