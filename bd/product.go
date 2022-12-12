@@ -7,6 +7,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ptilotta/ecomgo/models"
+	"github.com/ptilotta/ecomgo/tools"
 )
 
 func InsertProduct(p models.Product) (int64, error) {
@@ -19,7 +20,7 @@ func InsertProduct(p models.Product) (int64, error) {
 	defer Db.Close()
 
 	/* Armo INSERT para el registro */
-	sentencia := "INSERT INTO products (Prod_Title"
+	sentencia := "INSERT INTO products (Prod_Title, Prod_CreatedAt "
 
 	if len(p.ProdDescription) > 0 {
 		sentencia = sentencia + ", Prod_Description"
@@ -29,10 +30,10 @@ func InsertProduct(p models.Product) (int64, error) {
 		sentencia = sentencia + ", Prod_Price"
 	}
 
-	sentencia = sentencia + ") VALUES ('" + p.ProdTitle + "'"
+	sentencia = sentencia + ") VALUES ('" + p.ProdTitle + "','" + tools.FechaMySQL() + "'"
 
 	if len(p.ProdDescription) > 0 {
-		sentencia = sentencia + ", '" + EscapeString(p.ProdDescription) + "'"
+		sentencia = sentencia + ", '" + tools.EscapeString(p.ProdDescription) + "'"
 	}
 
 	if p.ProdPrice > 0 {
