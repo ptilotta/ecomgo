@@ -10,6 +10,7 @@ import (
 	"github.com/ptilotta/ecomgo/awsgo"
 	"github.com/ptilotta/ecomgo/bd"
 	"github.com/ptilotta/ecomgo/handlers"
+	"github.com/ptilotta/ecomgo/tools"
 
 	lambda "github.com/aws/aws-lambda-go/lambda"
 )
@@ -40,6 +41,10 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 	fmt.Println("----------------------------------------------------------------")
 
 	bd.ReadSecret()
+	ok, err, mesaje := tools.ValidoJWT("eyJraWQiOiJmMnNMNEt5a1AweFlBNDFieUp3TEQwTFlMOXZIVlltb0VpMFwvdmdqZ2ZGYz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI0Y2UyNTJmNS04ZmMwLTQxYjgtYTMwOS03NDc1YjhlMzc4NDMiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV9sbjBiTnVSQnYiLCJ2ZXJzaW9uIjoyLCJjbGllbnRfaWQiOiI3aGw2MThubXZwbm9ha2Uzc3IyOTBkdHRhaCIsImV2ZW50X2lkIjoiM2RmYTA2MmItMWI1Ni00ZjgyLWEzNmUtYjgyY2QxN2ZhOWJkIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJvcGVuaWQgZW1haWwiLCJhdXRoX3RpbWUiOjE2NzA4NzczOTUsImV4cCI6MTY3MDk2Mzc5NSwiaWF0IjoxNjcwODc3Mzk1LCJqdGkiOiJmNzM3Njk3MS04ZDQwLTQ5MzMtOTBkMC0zOWUxYjM0ZjA4YmQiLCJ1c2VybmFtZSI6IjRjZTI1MmY1LThmYzAtNDFiOC1hMzA5LTc0NzViOGUzNzg0MyJ9.ERQ10hs63DmMOnmVKiEDlnit6EwHREzSZkgVaDjbBLzctbm2qmQLSRU7c8UOBemUvonnMfavqvdE1DNN8zaXE1STuOFwnMLjmndO3pmMJtOuXG9hllWmPUDD1u5MxQMVs0lG9FzwJIh122RryI8U0dz48Wi95GB4qkNiGjpvgNpxFvD54D5ZBq9fmi0oWXYp56ZuH-Os97rILPWRR8Mw7OFKKJ3vQlrCBrJnucCY9ZEuGDwoOxeFJ4tUxJxhpZEviEGax9b1NrNv7VYuEpztXEdw5jkl2tqY0JVvgDvW0uKGThvQZu7NTwzEwTdeRzBYo_vrn7T9UpdgILpj0ij9iQ")
+
+	fmt.Println(mesaje)
+
 	status, message := handlers.Manejadores(path, method, body, headers)
 	mensaje, _ := json.Marshal(&Respuesta{
 		Status:  status,
@@ -54,6 +59,7 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 }
 
 func main() {
+
 	lambda.Start(EjecutoLambda)
 }
 

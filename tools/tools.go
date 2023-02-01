@@ -4,10 +4,17 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/golang-jwt/jwt"
 )
 
 var Email string
 var Expirate int64
+
+type MyCustomClaims struct {
+	User_name string `json:"user_name"`
+	jwt.StandardClaims
+}
 
 // FechaMySQL devuelve la fecha y hora actual en formato admitido por MySQL
 func FechaMySQL() string {
@@ -22,4 +29,23 @@ func EscapeString(t string) string {
 	desc := strings.ReplaceAll(t, "'", "")
 	desc = strings.ReplaceAll(desc, "\"", "")
 	return desc
+}
+
+func ValidoJWT(t string) (bool, error, string) {
+	var mySecret = ""
+
+	token, err := jwt.Parse(t, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+
+		return mySecret, nil
+	})
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		user_name := fmt.Sprintf("%s", claims["User_name"])
+		return true, nil, user_name
+	} else {
+		return false, err, ""
+	}
 }
