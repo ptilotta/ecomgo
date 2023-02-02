@@ -32,10 +32,10 @@ func EscapeString(t string) string {
 }
 
 func ValidoJWT(t string) (bool, error, string) {
-	var mySecret = "8Xi/PEzDz4P6m9cRMLGZ7ilcxBHIdZfnEgEpw/q4IwA="
+	var mySecret = "pT5kybsWJysx5xQWbmh5o_g7ocJh2kzsY1ttWtdOFR0Bp9lm3j9Y3GzpUPp0mB0TQriivY1B62y1EtaOwLO3FrAac_wJsNHjdVsENE69ADJXWoSLt7PN_4EkZf-exvrr6zoRXe1k5IGODcT9N7eGbLIPub6tT9j9JZR5b07tezVVBzetu2utr2Dy9zGsO9f_aBiXItPYMyqtXOlQiviZfG3rAxCmcFDmn6IkvBinWBHG6TXKc5dMy7sM7teEeymz4IK1FMBBMFjs5N5v9Kj9cPwrz5I9CZum9STvqibqlDbTMWPqG1nJApKmftFke0FuALEKH9sROIN5hz7sy7vKIw"
 
 	token, err := jwt.Parse(t, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 
