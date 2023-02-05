@@ -2,15 +2,16 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/ptilotta/ecomgo/awsgo"
 	"github.com/ptilotta/ecomgo/bd"
 	"github.com/ptilotta/ecomgo/handlers"
-	"github.com/ptilotta/ecomgo/tools"
 
 	lambda "github.com/aws/aws-lambda-go/lambda"
 )
@@ -41,9 +42,28 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 	fmt.Println("----------------------------------------------------------------")
 
 	bd.ReadSecret()
-	ok, err, mesaje := tools.ValidoJWT("eyJraWQiOiJmMnNMNEt5a1AweFlBNDFieUp3TEQwTFlMOXZIVlltb0VpMFwvdmdqZ2ZGYz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI0Y2UyNTJmNS04ZmMwLTQxYjgtYTMwOS03NDc1YjhlMzc4NDMiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV9sbjBiTnVSQnYiLCJ2ZXJzaW9uIjoyLCJjbGllbnRfaWQiOiI3aGw2MThubXZwbm9ha2Uzc3IyOTBkdHRhaCIsImV2ZW50X2lkIjoiM2RmYTA2MmItMWI1Ni00ZjgyLWEzNmUtYjgyY2QxN2ZhOWJkIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJvcGVuaWQgZW1haWwiLCJhdXRoX3RpbWUiOjE2NzA4NzczOTUsImV4cCI6MTY3MDk2Mzc5NSwiaWF0IjoxNjcwODc3Mzk1LCJqdGkiOiJmNzM3Njk3MS04ZDQwLTQ5MzMtOTBkMC0zOWUxYjM0ZjA4YmQiLCJ1c2VybmFtZSI6IjRjZTI1MmY1LThmYzAtNDFiOC1hMzA5LTc0NzViOGUzNzg0MyJ9.ERQ10hs63DmMOnmVKiEDlnit6EwHREzSZkgVaDjbBLzctbm2qmQLSRU7c8UOBemUvonnMfavqvdE1DNN8zaXE1STuOFwnMLjmndO3pmMJtOuXG9hllWmPUDD1u5MxQMVs0lG9FzwJIh122RryI8U0dz48Wi95GB4qkNiGjpvgNpxFvD54D5ZBq9fmi0oWXYp56ZuH-Os97rILPWRR8Mw7OFKKJ3vQlrCBrJnucCY9ZEuGDwoOxeFJ4tUxJxhpZEviEGax9b1NrNv7VYuEpztXEdw5jkl2tqY0JVvgDvW0uKGThvQZu7NTwzEwTdeRzBYo_vrn7T9UpdgILpj0ij9iQ")
 
-	fmt.Println(mesaje, ok, err)
+	token := "eyJraWQiOiJlS3lvdytnb1wvXC9yWmtkbGFhRFNOM25jTTREd0xTdFhibks4TTB5b211aE09IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJjMTcxOGY3OC00ODY5LTRmMmEtYTk2ZS1lYmEwYmJkY2RkMjEiLCJldmVudF9pZCI6IjZmYWMyZGNjLTJlMzUtMTFlOS05NDZjLTZiZDI0YmRlZjFiNiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE1NDk5MTQyNjUsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy13ZXN0LTIuYW1hem9uYXdzLmNvbVwvdXMtd2VzdC0yX0wwVldGSEVueSIsImV4cCI6MTU0OTkxNzg2NSwiaWF0IjoxNTQ5OTE0MjY1LCJqdGkiOiIzMTg0MDdkMC0zZDNhLTQ0NDItOTMyYy1lY2I0MjQ2MzRiYjIiLCJjbGllbnRfaWQiOiI2ZjFzcGI2MzZwdG4wNzRvbjBwZGpnbms4bCIsInVzZXJuYW1lIjoiYzE3MThmNzgtNDg2OS00ZjJhLWE5NmUtZWJhMGJiZGNkZDIxIn0.rJl9mdCrw_lertWhC5RiJcfhRP-xwTYkPLPXmi_NQEO-LtIJ-kwVEvUaZsPnBXku3bWBM3V35jdJloiXclbffl4SDLVkkvU9vzXDETAMaZEzOY1gDVcg4YzNNR4H5kHnl-G-XiN5MajgaWbjohDHTvbPnqgW7e_4qNVXueZv2qfQ8hZ_VcyniNxMGaui-C0_YuR6jdH-T14Wl59Cyf-UFEyli1NZFlmpUQ8QODGMUI12PVFOZiHJIOZ3CQM_Xs-TlRy53RlKGFzf6RQfRm57rJw_zLyJHHnB8DZgbdCRfhNsqZka7ZZUUAlS9aMzdmSc3pPFSJ-hH3p8eFAgB4E71g"
+
+	// Separamos el token en tres partes, separadas por "."
+	parts := strings.Split(token, ".")
+
+	// Validamos que tengan 3 partes
+	if len(parts) != 3 {
+		fmt.Println("El token no es válido.")
+	}
+
+	// La segunda parte contiene la información de usuario codificada
+	// como una estructura JSON. Debemos decodificarla.
+	// En este ejemplo, usamos base64.StdEncoding.DecodeString para
+	// decodificar la parte en una cadena.
+	userInfo, err := base64.StdEncoding.DecodeString(parts[1])
+	if err != nil {
+		fmt.Println("No se puede decodificar la parte del token:", err)
+	}
+	// Aquí puedes hacer algo con la información de usuario, por ejemplo,
+	// deserializarla en una estructura de datos
+	fmt.Println("Información de usuario:", string(userInfo))
 
 	status, message := handlers.Manejadores(path, method, body, headers)
 	mensaje, _ := json.Marshal(&Respuesta{
