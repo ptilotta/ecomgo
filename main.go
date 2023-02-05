@@ -72,6 +72,7 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 			Body:       string(mensaje),
 		}
 		return res, nil */
+	return nil, nil
 }
 
 func main() {
