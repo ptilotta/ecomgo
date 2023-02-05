@@ -60,6 +60,7 @@ func ValidoToken(token string) (bool, error, string) {
 	tm := time.Unix(int64(tmInt), 0)
 
 	if tm.Before(ahora) {
+		fmt.Println(ahora.String() + " > " + tm.String())
 		fmt.Println("Token expirado !")
 		return false, err, "Token expirado !"
 	}
