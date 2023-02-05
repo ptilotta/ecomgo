@@ -37,8 +37,8 @@ func ValidoToken(token string) (bool, error, string) {
 	// como una estructura JSON. Debemos decodificarla.
 	// En este ejemplo, usamos base64.StdEncoding.DecodeString para
 	// decodificar la parte en una cadena.
-	fmt.Println("Parte 1 es = a " + parts[1])
-	userInfo, err := base64.StdEncoding.DecodeString(parts[1])
+	fmt.Println("Parte 1 es = " + parts[1])
+	userInfo, err := base64.StdEncoding.Strict().DecodeString(parts[1])
 	if err != nil {
 		fmt.Println("No se puede decodificar la parte del token:", err)
 		return false, err, "No se puede decodificar la parte del token:"
