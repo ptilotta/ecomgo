@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -47,16 +46,15 @@ func ValidoToken(token string) (bool, error, string) {
 	fmt.Println("Información de usuario:", string(userInfo))
 
 	// Serializamos el objeto userInfo dentro de la estructura correcta
-	var jwt tokenJSON
-	err = json.Unmarshal(userInfo, &jwt)
+	var jwtJSON tokenJSON
+	err = json.Unmarshal(userInfo, &jwtJSON)
 	if err != nil {
 		fmt.Println("No se puede decodificar la estructura json:", err)
 		return false, err, "No se puede decodificar la estructura json:"
 	}
 
-	fmt.Println("LA FECHA DEL TOKEN ES " + strconv.Itoa(jwt.exp))
 	ahora := time.Now()
-	tm := time.Unix(int64(jwt.exp), 0)
+	tm := time.Unix(int64(jwtJSON.exp), 0)
 
 	if tm.Before(ahora) {
 		fmt.Println(ahora.String() + " > " + tm.String())
