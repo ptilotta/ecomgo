@@ -1,156 +1,66 @@
 package auth
 
 import (
-	"crypto/rsa"
 	"encoding/base64"
-	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"math/big"
-	"net/http"
-
-	jwt "github.com/golang-jwt/jwt/v4"
+	"strconv"
+	"strings"
+	"time"
 )
 
-// Auth ...
-type Auth struct {
-	jwk               *JWK
-	jwkURL            string
-	cognitoRegion     string
-	cognitoUserPoolID string
+type tokenJSON struct {
+	sub       string
+	event_id  string
+	token_use string
+	scope     string
+	auth_time string
+	iss       string
+	exp       string
+	iat       string
+	jti       string
+	client_id string
+	username  string
 }
 
-// Config ...
-type Config struct {
-	CognitoRegion     string
-	CognitoUserPoolID string
-}
+func ValidoToken(token string) (bool, error, string) {
+	// Separamos el token en tres partes, separadas por "."
+	parts := strings.Split(token, ".")
 
-// JWK ...
-type JWK struct {
-	Keys []struct {
-		Alg string `json:"alg"`
-		E   string `json:"e"`
-		Kid string `json:"kid"`
-		Kty string `json:"kty"`
-		N   string `json:"n"`
-	} `json:"keys"`
-}
-
-// NewAuth ...
-func NewAuth(config *Config) *Auth {
-	a := &Auth{
-		cognitoRegion:     config.CognitoRegion,
-		cognitoUserPoolID: config.CognitoUserPoolID,
+	// Validamos que tengan 3 partes
+	if len(parts) != 3 {
+		fmt.Println("El token no es válido.")
+		return false, nil, "El token no es válido."
 	}
 
-	a.jwkURL = fmt.Sprintf("https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", a.cognitoRegion, a.cognitoUserPoolID)
-	err := a.CacheJWK()
+	// La segunda parte contiene la información de usuario codificada
+	// como una estructura JSON. Debemos decodificarla.
+	// En este ejemplo, usamos base64.StdEncoding.DecodeString para
+	// decodificar la parte en una cadena.
+	userInfo, err := base64.StdEncoding.DecodeString(parts[1])
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("No se puede decodificar la parte del token:", err)
+		return false, err, "No se puede decodificar la parte del token:"
 	}
+	// Aquí puedes hacer algo con la información de usuario, por ejemplo,
+	// deserializarla en una estructura de datos
+	fmt.Println("Información de usuario:", string(userInfo))
 
-	return a
-}
-
-// CacheJWK ...
-func (a *Auth) CacheJWK() error {
-	req, err := http.NewRequest("GET", a.jwkURL, nil)
+	// Serializamos el objeto userInfo dentro de la estructura correcta
+	var jwt tokenJSON
+	err = json.Unmarshal(userInfo, &jwt)
 	if err != nil {
-		return err
+		fmt.Println("No se puede decodificar la estructura json:", err)
+		return false, err, "No se puede decodificar la estructura json:"
 	}
 
-	req.Header.Add("Accept", "application/json")
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
+	ahora := time.Now()
+	tm := time.Unix(int64(strconv.Atoi(jwt.exp)), 0)
+
+	if tm < ahora {
+		fmt.Println("Token expirado !")
+		return false, err, "Token expirado !"
 	}
-
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-
-	jwk := new(JWK)
-	err = json.Unmarshal(body, jwk)
-	if err != nil {
-		return err
-	}
-
-	a.jwk = jwk
-	return nil
-}
-
-// ParseJWT ...
-func (a *Auth) ParseJWT(tokenString string) (*jwt.Token, error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		key := convertKey(a.jwk.Keys[1].E, a.jwk.Keys[1].N)
-		return key, nil
-	})
-	if err != nil {
-		return token, err
-	}
-
-	return token, nil
-}
-
-// JWK ...
-func (a *Auth) JWK() *JWK {
-	return a.jwk
-}
-
-// JWKURL ...
-func (a *Auth) JWKURL() string {
-	return a.jwkURL
-}
-
-// https://gist.github.com/MathieuMailhos/361f24316d2de29e8d41e808e0071b13
-func convertKey(rawE, rawN string) *rsa.PublicKey {
-	decodedE, err := base64.RawURLEncoding.DecodeString(rawE)
-	if err != nil {
-		panic(err)
-	}
-	if len(decodedE) < 4 {
-		ndata := make([]byte, 4)
-		copy(ndata[4-len(decodedE):], decodedE)
-		decodedE = ndata
-	}
-	pubKey := &rsa.PublicKey{
-		N: &big.Int{},
-		E: int(binary.BigEndian.Uint32(decodedE[:])),
-	}
-	decodedN, err := base64.RawURLEncoding.DecodeString(rawN)
-	if err != nil {
-		panic(err)
-	}
-	pubKey.N.SetBytes(decodedN)
-	return pubKey
-}
-
-func CheckJWT(CognitoUserPool string, CognitoRegion string, tokenStr string) (bool, error, string) {
-
-	auth := NewAuth(&Config{
-		CognitoRegion:     CognitoRegion,
-		CognitoUserPoolID: CognitoUserPool,
-	})
-
-	err := auth.CacheJWK()
-	if err != nil {
-		return false, err, string("")
-	}
-
-	token, err := auth.ParseJWT(tokenStr)
-	if err != nil {
-		return false, err, string("")
-	}
-
-	if !token.Valid {
-		return false, nil, token.Claims.Valid().Error()
-	}
-
-	return true, nil, string("")
+	fmt.Println(tm)
+	return true, nil, string(userInfo)
 }
