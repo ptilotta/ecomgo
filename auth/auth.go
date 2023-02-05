@@ -9,17 +9,17 @@ import (
 )
 
 type tokenJSON struct {
-	sub       string
-	event_id  string
-	token_use string
-	scope     string
-	auth_time int
-	iss       string
-	exp       int
-	iat       int
-	jti       string
-	client_id string
-	username  string
+	sub       string `json:"sub"`
+	event_id  string `json:"event_id"`
+	token_use string `json:"token_use"`
+	scope     string `json:"scope"`
+	auth_time int    `json:"auth_time"`
+	iss       string `json:"iss"`
+	exp       int    `json:"exp"`
+	iat       int    `json:"iat"`
+	jti       string `json:"jti"`
+	client_id string `json:"client_id"`
+	username  string `json:"username"`
 }
 
 func ValidoToken(token string) (bool, error, string) {
@@ -46,16 +46,16 @@ func ValidoToken(token string) (bool, error, string) {
 	fmt.Println("Información de usuario:", string(userInfo))
 
 	// Serializamos el objeto userInfo dentro de la estructura correcta
-	var jwtJSON tokenJSON
-	err = json.Unmarshal(userInfo, &jwtJSON)
+	var tkj tokenJSON
+	err = json.Unmarshal(userInfo, &tkj)
 	if err != nil {
 		fmt.Println("No se puede decodificar la estructura json:", err)
 		return false, err, "No se puede decodificar la estructura json:"
 	}
 
-	fmt.Println("jwtJSON.sub = " + jwtJSON.sub)
+	fmt.Println("tkj.sub = " + tkj.sub)
 	ahora := time.Now()
-	tm := time.Unix(int64(jwtJSON.exp), 0)
+	tm := time.Unix(int64(tkj.exp), 0)
 
 	if tm.Before(ahora) {
 		fmt.Println(ahora.String() + " > " + tm.String())
