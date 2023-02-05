@@ -56,7 +56,8 @@ func ValidoToken(token string) (bool, error, string) {
 	}
 
 	ahora := time.Now()
-	tm := time.Unix(int64(strconv.Atoi(jwt.exp)), 0)
+	tmInt, _ := strconv.Atoi(jwt.exp)
+	tm := time.Unix(int64(tmInt), 0)
 
 	if tm < ahora {
 		fmt.Println("Token expirado !")
