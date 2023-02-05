@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -14,10 +13,10 @@ type tokenJSON struct {
 	event_id  string
 	token_use string
 	scope     string
-	auth_time string
+	auth_time int
 	iss       string
-	exp       string
-	iat       string
+	exp       int
+	iat       int
 	jti       string
 	client_id string
 	username  string
@@ -37,7 +36,6 @@ func ValidoToken(token string) (bool, error, string) {
 	// como una estructura JSON. Debemos decodificarla.
 	// En este ejemplo, usamos base64.StdEncoding.DecodeString para
 	// decodificar la parte en una cadena.
-	fmt.Println("Parte 1 es = " + parts[1])
 	userInfo, err := base64.StdEncoding.Strict().DecodeString(parts[1])
 	if err != nil {
 		fmt.Println("No se puede decodificar la parte del token:", err)
@@ -56,14 +54,12 @@ func ValidoToken(token string) (bool, error, string) {
 	}
 
 	ahora := time.Now()
-	tmInt, _ := strconv.Atoi(jwt.exp)
-	tm := time.Unix(int64(tmInt), 0)
+	tm := time.Unix(int64(jwt.exp), 0)
 
 	if tm.Before(ahora) {
 		fmt.Println(ahora.String() + " > " + tm.String())
 		fmt.Println("Token expirado !")
 		return false, err, "Token expirado !"
 	}
-	fmt.Println(tm)
 	return true, nil, string(userInfo)
 }
