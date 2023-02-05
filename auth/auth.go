@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -53,6 +54,7 @@ func ValidoToken(token string) (bool, error, string) {
 		return false, err, "No se puede decodificar la estructura json:"
 	}
 
+	fmt.Println("LA FECHA DEL TOKEN ES " + strconv.Itoa(jwt.exp))
 	ahora := time.Now()
 	tm := time.Unix(int64(jwt.exp), 0)
 
