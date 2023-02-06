@@ -53,10 +53,10 @@ func ValidoToken(token string) (bool, error, string) {
 		return false, err, "No se puede decodificar la estructura json:"
 	}
 
-	fmt.Println("tkj.sub = " + tkj.Sub)
 	ahora := time.Now()
 	tm := time.Unix(int64(tkj.Exp), 0)
 
+	fmt.Println(ahora.String() + " > " + tm.String())
 	if tm.Before(ahora) {
 		fmt.Println(ahora.String() + " > " + tm.String())
 		fmt.Println("Token expirado !")
