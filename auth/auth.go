@@ -9,17 +9,17 @@ import (
 )
 
 type TokenJSON struct {
-	sub       string
-	event_id  string
-	token_use string
-	scope     string
-	auth_time int
-	iss       string
-	exp       int
-	iat       int
-	jti       string
-	client_id string
-	username  string
+	Sub       string
+	Event_id  string
+	Token_use string
+	Scope     string
+	Auth_time int
+	Iss       string
+	Exp       int
+	Iat       int
+	Jti       string
+	Client_id string
+	Username  string
 }
 
 func ValidoToken(token string) (bool, error, string) {
@@ -53,9 +53,9 @@ func ValidoToken(token string) (bool, error, string) {
 		return false, err, "No se puede decodificar la estructura json:"
 	}
 
-	fmt.Println("tkj.sub = " + tkj.sub)
+	fmt.Println("tkj.sub = " + tkj.Sub)
 	ahora := time.Now()
-	tm := time.Unix(int64(tkj.exp), 0)
+	tm := time.Unix(int64(tkj.Exp), 0)
 
 	if tm.Before(ahora) {
 		fmt.Println(ahora.String() + " > " + tm.String())
