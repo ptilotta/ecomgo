@@ -41,10 +41,9 @@ func ValidoToken(token string) (bool, error, string) {
 		fmt.Println("No se puede decodificar la parte del token:", err)
 		return false, err, "No se puede decodificar la parte del token:"
 	}
+
 	// Aquí puedes hacer algo con la información de usuario, por ejemplo,
 	// deserializarla en una estructura de datos
-	fmt.Println("Información de usuario:", string(userInfo))
-
 	// Serializamos el objeto userInfo dentro de la estructura correcta
 	var tkj TokenJSON
 	err = json.Unmarshal(userInfo, &tkj)
@@ -56,9 +55,8 @@ func ValidoToken(token string) (bool, error, string) {
 	ahora := time.Now()
 	tm := time.Unix(int64(tkj.Exp), 0)
 
-	fmt.Println(ahora.String() + " > " + tm.String())
 	if tm.Before(ahora) {
-		fmt.Println(ahora.String() + " > " + tm.String())
+		fmt.Println("Fecha expiración token = " + tm.String())
 		fmt.Println("Token expirado !")
 		return false, err, "Token expirado !"
 	}

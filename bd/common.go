@@ -77,12 +77,12 @@ func UserExists(userUUID string) (error, bool) {
 }
 
 // UserExists chequea si un email ya se encuentra en la tabla users
-func UserIsAdmin(userUUID string) (error, bool) {
+func UserIsAdmin(userUUID string) (bool, string) {
 	fmt.Println("Comienza UserIsAdmin")
 
 	err := DbConnnect()
 	if err != nil {
-		return err, false
+		return false, err.Error()
 	}
 	defer Db.Close()
 
@@ -91,7 +91,7 @@ func UserIsAdmin(userUUID string) (error, bool) {
 	fmt.Println(sentencia)
 	rows, err := Db.Query(sentencia)
 	if err != nil {
-		return err, false
+		return false, err.Error()
 	}
 
 	var valor string
@@ -100,9 +100,9 @@ func UserIsAdmin(userUUID string) (error, bool) {
 
 	fmt.Println("UserIsAdmin > Ejecución exitosa - valor devuelto " + valor)
 	if valor == "1" {
-		return nil, true
+		return true, ""
 	} else {
-		return nil, false
+		return false, "User is not Admin"
 	}
 }
 
