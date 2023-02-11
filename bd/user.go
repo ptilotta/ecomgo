@@ -46,7 +46,7 @@ func SelectUser(UFields models.User) (models.User, error) {
 
 	/* Armo UPDATE para el registro */
 	sentencia := "Select * FROM users WHERE User_UUID='" + UFields.UserUUID + "'"
-
+	fmt.Println(sentencia)
 	var rows *sql.Rows
 	rows, err = Db.Query(sentencia)
 	defer rows.Close()
