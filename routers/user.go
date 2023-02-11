@@ -2,6 +2,7 @@ package routers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/ptilotta/ecomgo/bd"
 	"github.com/ptilotta/ecomgo/models"
@@ -47,6 +48,7 @@ func SelectUser(body string, User string) (int, string) {
 	}
 
 	user, err := bd.SelectUser(t)
+	fmt.Println(user)
 	if err != nil {
 		return 400, "Ocurrió un error al intentar realizar el registro del usuario " + User + " > " + err.Error()
 	}
