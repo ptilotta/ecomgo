@@ -40,7 +40,7 @@ func validoAuthorization(path string, method string, headers map[string]string) 
 		(path == "/default/ecommerce/product" && method == "POST") {
 
 		fmt.Println(headers)
-		token := headers["Authorization"]
+		token := headers["authorization"]
 
 		if len(token) == 0 {
 			return false, 401, "Token requerido"
