@@ -39,6 +39,7 @@ func validoAuthorization(path string, method string, headers map[string]string) 
 		path == "/default/ecommerce/users" ||
 		(path == "/default/ecommerce/product" && method == "POST") {
 
+		fmt.Println(headers)
 		token := headers["Authorization"]
 
 		if len(token) == 0 {
