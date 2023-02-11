@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/ptilotta/ecomgo/bd"
 )
 
 var Email string
@@ -30,18 +29,4 @@ func EscapeString(t string) string {
 	desc := strings.ReplaceAll(t, "'", "")
 	desc = strings.ReplaceAll(desc, "\"", "")
 	return desc
-}
-
-func IsAdmin(user string) (bool, string) {
-	// Chequeamos que sea Admin quien hace la petición
-	var isAdmin bool
-	err, isAdmin := bd.UserIsAdmin(user)
-	if err != nil {
-		return false, err.Error()
-	}
-	if !isAdmin {
-		return false, "Operación solo admitida para usuario Admin"
-	}
-
-	return true, string("")
 }

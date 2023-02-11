@@ -34,3 +34,29 @@ func InsertProduct(body string, User string) (int, string) {
 
 	return 200, "{ ProductID: " + strconv.Itoa(int(result)) + "}"
 }
+
+/*SelectProduct es la funcion para crear en la BD el registro de producto */
+func SelectProduct(body string) (int, string) {
+	var t models.Product
+	err := json.Unmarshal([]byte(body), &t)
+
+	if err != nil {
+		return 400, "Error en los datos recibidos " + err.Error()
+	}
+
+	if t.ProdID == 0 {
+		return 400, "Debe especificar el ID del Producto"
+	}
+
+	result, err2 := bd.SelectProduct(t)
+	if err2 != nil {
+		return 400, "Ocurrió un error al intentar capturar el registro del producto " + strconv.Itoa(t.ProdID) + " > " + err.Error()
+	}
+
+	Product, err3 := json.Marshal(result)
+	if err3 != nil {
+		return 400, "Ocurrió un error al intentar convertir en JSON el registro de Producto"
+	}
+
+	return 200, string(Product)
+}

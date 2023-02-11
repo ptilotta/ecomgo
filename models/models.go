@@ -26,8 +26,7 @@ type ListUsers struct {
 }
 
 type DeleteUser struct {
-	UserUUID_Admin string `json:"userUUID_Admin"`
-	UserUUID       string `json:"userUUID"`
+	UserUUID string `json:"userUUID"`
 }
 
 type Product struct {

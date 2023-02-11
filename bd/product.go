@@ -57,3 +57,45 @@ func InsertProduct(p models.Product) (int64, error) {
 	fmt.Println("Insert Product > Ejecución exitosa ")
 	return LastInsertId, err
 }
+
+func SelectProduct(p models.Product) (models.Product, error) {
+	fmt.Println("Comienza SelectProduct")
+	var Prod models.Product
+	err := DbConnnect()
+	if err != nil {
+		return Prod, err
+	}
+	defer Db.Close()
+
+	/* Armo INSERT para el registro */
+	sentencia := "SELECT Prod_Title, Prod_Description, Prod_CreatedAt, Prod_Updated, Prod_Price, Prod_Status FROM products WHERE Prod_Id = " + strconv.Itoa(p.ProdID)
+
+	var rows *sql.Rows
+	rows, err = Db.Query(sentencia)
+	defer rows.Close()
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return Prod, err
+	}
+
+	rows.Next()
+
+	var prodTitle sql.NullString
+	var prodDescription sql.NullString
+	var prodCreatedAt sql.NullTime
+	var prodUpdated sql.NullTime
+	var prodPrice sql.NullFloat64
+	var prodStatus sql.NullInt16
+	rows.Scan(&prodTitle, &prodDescription, &prodCreatedAt, &prodUpdated, &prodPrice, &prodStatus)
+
+	Prod.ProdTitle = prodTitle.String
+	Prod.ProdDescription = prodDescription.String
+	Prod.ProdCreatedAt = prodCreatedAt.Time.String()
+	Prod.ProdUpdated = prodUpdated.Time.String()
+	Prod.ProdPrice = prodPrice.Float64
+	Prod.ProdStatus = int(prodStatus.Int16)
+
+	fmt.Println("Select Product > Ejecución exitosa ")
+	return Prod, err
+}
