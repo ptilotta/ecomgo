@@ -34,7 +34,7 @@ func UpdateUser(UFields models.User) error {
 }
 
 // SelectUser Selecciona los datos de un usuario en particular
-func SelectUser(UFields models.User) (models.User, error) {
+func SelectUser(UserID string) (models.User, error) {
 	fmt.Println("Comienza SelectUser")
 	User := models.User{}
 
@@ -45,7 +45,7 @@ func SelectUser(UFields models.User) (models.User, error) {
 	defer Db.Close()
 
 	/* Armo UPDATE para el registro */
-	sentencia := "Select * FROM users WHERE User_UUID='" + UFields.UserUUID + "'"
+	sentencia := "Select * FROM users WHERE User_UUID='" + UserID + "'"
 	fmt.Println(sentencia)
 	var rows *sql.Rows
 	rows, err = Db.Query(sentencia)

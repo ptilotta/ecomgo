@@ -40,20 +40,18 @@ func UpdateUser(body string, User string) (int, string) {
 
 /*SelectUser es la funcion para obtener los datos de un usuario */
 func SelectUser(body string, User string) (int, string) {
-	var t models.User
-
 	_, encontrado := bd.UserExists(User)
 	if encontrado == false {
 		return 400, "No existe un usuario registrado con ese UUID"
 	}
 
-	user, err := bd.SelectUser(t)
-	fmt.Println(user)
+	row, err := bd.SelectUser(User)
+	fmt.Println(row)
 	if err != nil {
 		return 400, "Ocurrió un error al intentar realizar el registro del usuario " + User + " > " + err.Error()
 	}
 
-	respJson, err := json.Marshal(user)
+	respJson, err := json.Marshal(row)
 	if err != nil {
 		return 500, "Error al formatear los datos del usuario como JSON"
 	}
