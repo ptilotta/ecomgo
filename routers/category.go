@@ -34,3 +34,34 @@ func InsertCategory(body string, User string) (int, string) {
 
 	return 200, "{ CategID: " + strconv.Itoa(int(result)) + "}"
 }
+
+/*UpdateCategory es la funcion para modificar en la BD el registro de categoría */
+func UpdateCategory(body string, User string) (int, string) {
+	var t models.Category
+	err := json.Unmarshal([]byte(body), &t)
+
+	if err != nil {
+		return 400, "Error en los datos recibidos " + err.Error()
+	}
+
+	if t.CategID == 0 {
+		return 400, "Debe especificar ID de la Categoría a actualizar"
+	}
+
+	if len(t.CategName) == 0 && len(t.CategPath) == 0 {
+		return 400, "Debe especificar Categ_Name o Categ_Path para actualizar"
+	}
+
+	// Chequeamos que sea Admin quien hace la petición
+	isAdmin, msg := bd.UserIsAdmin(User)
+	if !isAdmin {
+		return 400, msg
+	}
+
+	err2 := bd.UpdateCategory(t)
+	if err2 != nil {
+		return 400, "Ocurrió un error al intentar realizar el UPDATE del producto " + strconv.Itoa(t.CategID) + " > " + err.Error()
+	}
+
+	return 200, "Update OK"
+}
