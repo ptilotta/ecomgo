@@ -3,12 +3,13 @@ package handlers
 import (
 	"fmt"
 
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/ptilotta/ecomgo/auth"
 	"github.com/ptilotta/ecomgo/routers"
 )
 
 /*Manejadores seteo mi puerto, el Handler y pongo a escuchar al Servidor */
-func Manejadores(path string, method string, body string, headers map[string]string) (int, string) {
+func Manejadores(path string, method string, body string, headers map[string]string, request events.APIGatewayV2HTTPRequest) (int, string) {
 
 	var User string
 
@@ -21,20 +22,20 @@ func Manejadores(path string, method string, body string, headers map[string]str
 
 	switch path {
 	case "/default/ecommerce/user/me":
-		return UserCRUD(body, path, method, User)
+		return UserCRUD(body, path, method, User, request)
 	case "/default/ecommerce/users":
 		if method == "GET" {
-			fmt.Println("Voy al routers.SelectUsers(body, User)")
-			return routers.SelectUsers(body, User)
+			fmt.Println("Voy al routers.SelectUsers(body, User, request)")
+			return routers.SelectUsers(body, User, request)
 		}
 	case "/default/ecommerce/product":
-		return ProductCRUD(body, path, method, User)
+		return ProductCRUD(body, path, method, User, request)
 	case "/default/ecommerce/stock":
 		if method == "PUT" {
 			return routers.UpdateStock(body, User)
 		}
 	case "/default/ecommerce/category":
-		return CategoryCRUD(body, path, method, User)
+		return CategoryCRUD(body, path, method, User, request)
 	}
 
 	return 200, "Todo OK"
@@ -73,7 +74,7 @@ func validoAuthorization(path string, method string, headers map[string]string) 
 	return true, 200, ""
 }
 
-func UserCRUD(body string, path string, method string, user string) (int, string) {
+func UserCRUD(body string, path string, method string, user string, request events.APIGatewayV2HTTPRequest) (int, string) {
 	fmt.Println("Voy a procesar " + path + " > " + method + " para el user " + user)
 	switch method {
 	case "POST":
@@ -86,13 +87,13 @@ func UserCRUD(body string, path string, method string, user string) (int, string
 	return 400, "Method Invalid"
 }
 
-func ProductCRUD(body string, path string, method string, user string) (int, string) {
+func ProductCRUD(body string, path string, method string, user string, request events.APIGatewayV2HTTPRequest) (int, string) {
 	fmt.Println("Voy a procesar " + path + " > " + method)
 	switch method {
 	case "POST":
 		return routers.InsertProduct(body, user)
 	case "GET":
-		return routers.SelectProduct(body)
+		return routers.SelectProduct(body, request)
 	case "PUT":
 		return routers.UpdateProduct(body, user)
 	case "DELETE":
@@ -101,7 +102,7 @@ func ProductCRUD(body string, path string, method string, user string) (int, str
 	return 400, "Method Invalid"
 }
 
-func CategoryCRUD(body string, path string, method string, user string) (int, string) {
+func CategoryCRUD(body string, path string, method string, user string, request events.APIGatewayV2HTTPRequest) (int, string) {
 	fmt.Println("Voy a procesar " + path + " > " + method)
 	switch method {
 	case "POST":
@@ -109,7 +110,7 @@ func CategoryCRUD(body string, path string, method string, user string) (int, st
 	case "PUT":
 		return routers.UpdateCategory(body, user)
 	case "GET":
-		return routers.SelectCategory(body)
+		return routers.SelectCategory(body, request)
 	}
 	return 400, "Method Invalid"
 }

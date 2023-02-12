@@ -3,7 +3,9 @@ package routers
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/ptilotta/ecomgo/bd"
 	"github.com/ptilotta/ecomgo/models"
 )
@@ -60,7 +62,7 @@ func SelectUser(body string, User string) (int, string) {
 }
 
 /*SelectUsers es la funcion para obtener la lista de los usuarios en la base */
-func SelectUsers(body string, User string) (int, string) {
+func SelectUsers(body string, User string, request events.APIGatewayV2HTTPRequest) (int, string) {
 	var t models.ListUsers
 	err := json.Unmarshal([]byte(body), &t)
 
@@ -68,8 +70,14 @@ func SelectUsers(body string, User string) (int, string) {
 		return 400, "Error en los datos recibidos " + err.Error()
 	}
 
-	if t.Page == 0 {
-		t.Page = 1
+	// Proceso los parámetros recibidos
+	_, exists := request.QueryStringParameters["page"]
+	if !exists {
+		if request.QueryStringParameters["page"] == "0" {
+			t.Page = 1
+		} else {
+			t.Page, err = strconv.Atoi(request.QueryStringParameters["page"])
+		}
 	}
 
 	// Chequeamos que sea Admin quien hace la petición

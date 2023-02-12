@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"strconv"
 
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/ptilotta/ecomgo/bd"
 	"github.com/ptilotta/ecomgo/models"
 )
@@ -36,12 +37,18 @@ func InsertProduct(body string, User string) (int, string) {
 }
 
 /*SelectProduct es la funcion para crear en la BD el registro de producto */
-func SelectProduct(body string) (int, string) {
+func SelectProduct(body string, request events.APIGatewayV2HTTPRequest) (int, string) {
 	var t models.Product
 	err := json.Unmarshal([]byte(body), &t)
 
 	if err != nil {
 		return 400, "Error en los datos recibidos " + err.Error()
+	}
+
+	// Proceso los parámetros recibidos
+	_, exists := request.QueryStringParameters["prodId"]
+	if !exists {
+		t.ProdID, err = strconv.Atoi(request.QueryStringParameters["prodId"])
 	}
 
 	if t.ProdID == 0 {

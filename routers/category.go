@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"strconv"
 
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/ptilotta/ecomgo/bd"
 	"github.com/ptilotta/ecomgo/models"
 )
@@ -67,12 +68,18 @@ func UpdateCategory(body string, User string) (int, string) {
 }
 
 /*SelectCategory es la funcion para leer el registro de categoría */
-func SelectCategory(body string) (int, string) {
+func SelectCategory(body string, request events.APIGatewayV2HTTPRequest) (int, string) {
 	var t models.Category
 	err := json.Unmarshal([]byte(body), &t)
 
 	if err != nil {
 		return 400, "Error en los datos recibidos " + err.Error()
+	}
+
+	// Proceso los parámetros recibidos
+	_, exists := request.QueryStringParameters["categId"]
+	if !exists {
+		t.CategID, err = strconv.Atoi(request.QueryStringParameters["categId"])
 	}
 
 	if t.CategID == 0 {
