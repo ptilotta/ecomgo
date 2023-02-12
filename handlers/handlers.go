@@ -108,6 +108,8 @@ func CategoryCRUD(body string, path string, method string, user string) (int, st
 		return routers.InsertCategory(body, user)
 	case "PUT":
 		return routers.UpdateCategory(body, user)
+	case "GET":
+		return routers.SelectCategory(body)
 	}
 	return 400, "Method Invalid"
 }

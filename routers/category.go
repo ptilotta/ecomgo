@@ -60,8 +60,34 @@ func UpdateCategory(body string, User string) (int, string) {
 
 	err2 := bd.UpdateCategory(t)
 	if err2 != nil {
-		return 400, "Ocurrió un error al intentar realizar el UPDATE del producto " + strconv.Itoa(t.CategID) + " > " + err.Error()
+		return 400, "Ocurrió un error al intentar realizar el UPDATE de la categoria " + strconv.Itoa(t.CategID) + " > " + err.Error()
 	}
 
 	return 200, "Update OK"
+}
+
+/*SelectCategory es la funcion para leer el registro de categoría */
+func SelectCategory(body string) (int, string) {
+	var t models.Category
+	err := json.Unmarshal([]byte(body), &t)
+
+	if err != nil {
+		return 400, "Error en los datos recibidos " + err.Error()
+	}
+
+	if t.CategID == 0 {
+		return 400, "Debe especificar el ID de la Categoría"
+	}
+
+	result, err2 := bd.SelectCategory(t)
+	if err2 != nil {
+		return 400, "Ocurrió un error al intentar capturar el registro de la categoría " + strconv.Itoa(t.CategID) + " > " + err.Error()
+	}
+
+	Categ, err3 := json.Marshal(result)
+	if err3 != nil {
+		return 400, "Ocurrió un error al intentar convertir en JSON el registro de Categoría"
+	}
+
+	return 200, string(Categ)
 }
