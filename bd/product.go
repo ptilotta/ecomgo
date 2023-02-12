@@ -30,6 +30,18 @@ func InsertProduct(p models.Product) (int64, error) {
 		sentencia = sentencia + ", Prod_Price"
 	}
 
+	if p.ProdCategId > 0 {
+		sentencia = sentencia + ", Prod_CategoryId"
+	}
+
+	if p.ProdStock > 0 {
+		sentencia = sentencia + ", Prod_Stock"
+	}
+
+	if len(p.ProdPath) > 0 {
+		sentencia = sentencia + ", Prod_Path"
+	}
+
 	sentencia = sentencia + ") VALUES ('" + p.ProdTitle + "','" + tools.FechaMySQL() + "'"
 
 	if len(p.ProdDescription) > 0 {
@@ -38,6 +50,18 @@ func InsertProduct(p models.Product) (int64, error) {
 
 	if p.ProdPrice > 0 {
 		sentencia = sentencia + ", " + strconv.FormatFloat(p.ProdPrice, 'e', -1, 64)
+	}
+
+	if p.ProdCategId > 0 {
+		sentencia = sentencia + ", " + strconv.Itoa(p.ProdCategId)
+	}
+
+	if p.ProdStock > 0 {
+		sentencia = sentencia + ", " + strconv.Itoa(p.ProdStock)
+	}
+
+	if len(p.ProdPath) > 0 {
+		sentencia = sentencia + ", '" + p.ProdPath + "'"
 	}
 
 	sentencia = sentencia + ")"
@@ -67,8 +91,8 @@ func SelectProduct(p models.Product) (models.Product, error) {
 	}
 	defer Db.Close()
 
-	/* Armo INSERT para el registro */
-	sentencia := "SELECT Prod_Title, Prod_Description, Prod_CreatedAt, Prod_Updated, Prod_Price, Prod_Status FROM products WHERE Prod_Id = " + strconv.Itoa(p.ProdID)
+	/* Armo SELECT para el registro */
+	sentencia := "SELECT Prod_Title, Prod_Description, Prod_CreatedAt, Prod_Updated, Prod_Price, Prod_Status, Prod_Path, Prod_CategoryId, Prod_Stock FROM products WHERE Prod_Id = " + strconv.Itoa(p.ProdID)
 
 	var rows *sql.Rows
 	rows, err = Db.Query(sentencia)
@@ -87,7 +111,10 @@ func SelectProduct(p models.Product) (models.Product, error) {
 	var prodUpdated sql.NullTime
 	var prodPrice sql.NullFloat64
 	var prodStatus sql.NullInt16
-	rows.Scan(&prodTitle, &prodDescription, &prodCreatedAt, &prodUpdated, &prodPrice, &prodStatus)
+	var prodPath sql.NullString
+	var prodCategoryId sql.NullInt32
+	var prodStock sql.NullInt32
+	rows.Scan(&prodTitle, &prodDescription, &prodCreatedAt, &prodUpdated, &prodPrice, &prodStatus, &prodPath, &prodCategoryId, &prodStock)
 
 	Prod.ProdTitle = prodTitle.String
 	Prod.ProdDescription = prodDescription.String
@@ -95,6 +122,9 @@ func SelectProduct(p models.Product) (models.Product, error) {
 	Prod.ProdUpdated = prodUpdated.Time.String()
 	Prod.ProdPrice = prodPrice.Float64
 	Prod.ProdStatus = int(prodStatus.Int16)
+	Prod.ProdPath = prodPath.String
+	Prod.ProdCategId = int(prodCategoryId.Int32)
+	Prod.ProdStock = int(prodStock.Int32)
 
 	fmt.Println("Select Product > Ejecución exitosa ")
 	return Prod, err
