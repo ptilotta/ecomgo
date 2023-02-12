@@ -74,6 +74,7 @@ func SelectCategory(body string, request events.APIGatewayV2HTTPRequest) (int, s
 	var err error
 
 	fmt.Println(request.QueryStringParameters)
+	fmt.Println(request.QueryStringParameters["categId"])
 	// Proceso los parámetros recibidos
 	_, exists := request.QueryStringParameters["categId"]
 	if !exists {
