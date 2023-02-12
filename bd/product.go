@@ -193,3 +193,25 @@ func UpdateProduct(p models.Product) error {
 	fmt.Println("Update Product > Ejecución exitosa ")
 	return nil
 }
+
+func DeleteProduct(p models.Product) error {
+	fmt.Println("Comienza Delete")
+
+	err := DbConnnect()
+	if err != nil {
+		return err
+	}
+	defer Db.Close()
+
+	/* Armo DELETE para el registro */
+	sentencia := "DELETE FROM products WHERE Prod_Id = " + strconv.Itoa(p.ProdID)
+
+	_, err = Db.Exec(sentencia)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+
+	fmt.Println("Delete Product > Ejecución exitosa ")
+	return nil
+}

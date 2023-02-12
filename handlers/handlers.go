@@ -87,6 +87,8 @@ func ProductCRUD(body string, path string, method string, user string) (int, str
 		return routers.SelectProduct(body)
 	case "PUT":
 		return routers.UpdateProduct(body, user)
+	case "DELETE":
+		return routers.DeleteProduct(body, user)
 	}
 	return 400, "Method Invalid"
 }

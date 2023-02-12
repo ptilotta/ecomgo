@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"os"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -33,12 +32,12 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 	body := request.Body
 	headers := request.Headers
 
-	fmt.Println("----------------------------------------------------------------")
+	/* fmt.Println("----------------------------------------------------------------")
 	fmt.Println("path = " + path)
 	fmt.Println("method = " + method)
 	fmt.Println("body = " + body)
 	fmt.Println("----------------------------------------------------------------")
-
+	*/
 	bd.ReadSecret()
 
 	status, message := handlers.Manejadores(path, method, body, headers)
