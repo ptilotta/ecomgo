@@ -29,6 +29,10 @@ func Manejadores(path string, method string, body string, headers map[string]str
 		}
 	case "/default/ecommerce/product":
 		return ProductCRUD(body, path, method, User)
+	case "/default/ecommerce/stock":
+		if method == "PUT" {
+			return routers.UpdateStock(body, User)
+		}
 	}
 
 	return 200, "Todo OK"

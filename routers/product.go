@@ -106,3 +106,26 @@ func DeleteProduct(body string, User string) (int, string) {
 
 	return 200, "Delete OK"
 }
+
+/*UpdateStock es la funcion para actualizar el Stock de un producto */
+func UpdateStock(body string, User string) (int, string) {
+	var t models.Product
+	err := json.Unmarshal([]byte(body), &t)
+
+	if err != nil {
+		return 400, "Error en los datos recibidos " + err.Error()
+	}
+
+	// Chequeamos que sea Admin quien hace la petición
+	isAdmin, msg := bd.UserIsAdmin(User)
+	if !isAdmin {
+		return 400, msg
+	}
+
+	err2 := bd.UpdateStock(t)
+	if err2 != nil {
+		return 400, "Ocurrió un error al intentar realizar el Update del Stock del producto " + strconv.Itoa(t.ProdID) + " > " + err.Error()
+	}
+
+	return 200, "Update Stock OK"
+}

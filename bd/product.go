@@ -2,6 +2,7 @@ package bd
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -213,5 +214,31 @@ func DeleteProduct(p models.Product) error {
 	}
 
 	fmt.Println("Delete Product > Ejecución exitosa ")
+	return nil
+}
+
+func UpdateStock(p models.Product) error {
+	fmt.Println("Comienza Delete")
+
+	if p.ProdStock == 0 {
+		return errors.New("[ERROR] Debe enviar el Stock a modificar")
+	}
+
+	err := DbConnnect()
+	if err != nil {
+		return err
+	}
+	defer Db.Close()
+
+	/* Armo UPDATE para el Stock */
+	sentencia := "UPDATE products SET Prod_Stock = Prod_Stock + " + strconv.Itoa(p.ProdStock) + " WHERE Prod_Id = " + strconv.Itoa(p.ProdID)
+
+	_, err = Db.Exec(sentencia)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+
+	fmt.Println("Update Stock > Ejecución exitosa ")
 	return nil
 }
