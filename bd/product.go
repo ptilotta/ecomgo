@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strconv"
+	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ptilotta/ecomgo/models"
@@ -42,7 +43,7 @@ func InsertProduct(p models.Product) (int64, error) {
 		sentencia = sentencia + ", Prod_Path"
 	}
 
-	sentencia = sentencia + ") VALUES ('" + p.ProdTitle + "'"
+	sentencia = sentencia + ") VALUES ('" + tools.EscapeString(p.ProdTitle) + "'"
 
 	if len(p.ProdDescription) > 0 {
 		sentencia = sentencia + ", '" + tools.EscapeString(p.ProdDescription) + "'"
@@ -128,4 +129,67 @@ func SelectProduct(p models.Product) (models.Product, error) {
 
 	fmt.Println("Select Product > Ejecución exitosa ")
 	return Prod, err
+}
+
+func UpdateProduct(p models.Product) error {
+	fmt.Println("Comienza Update")
+
+	err := DbConnnect()
+	if err != nil {
+		return err
+	}
+	defer Db.Close()
+
+	/* Armo UPDATE para el registro */
+	sentencia := "UPDATE products SET "
+
+	if len(p.ProdTitle) > 0 {
+		sentencia = sentencia + " Prod_Title = '" + tools.EscapeString(p.ProdTitle) + "'"
+	}
+
+	if len(p.ProdDescription) > 0 {
+		if !strings.HasSuffix(sentencia, "SET ") {
+			sentencia = sentencia + ", "
+		}
+		sentencia = sentencia + "Prod_Description = '" + tools.EscapeString(p.ProdDescription) + "'"
+	}
+
+	if p.ProdPrice > 0 {
+		if !strings.HasSuffix(sentencia, "SET ") {
+			sentencia = sentencia + ", "
+		}
+		sentencia = sentencia + "Prod_Price = " + strconv.FormatFloat(p.ProdPrice, 'e', -1, 64)
+	}
+
+	if p.ProdCategId > 0 {
+		if !strings.HasSuffix(sentencia, "SET ") {
+			sentencia = sentencia + ", "
+		}
+		sentencia = sentencia + "Prod_CategoryId = " + strconv.Itoa(p.ProdCategId)
+	}
+
+	if p.ProdStock > 0 {
+		if !strings.HasSuffix(sentencia, "SET ") {
+			sentencia = sentencia + ", "
+		}
+		sentencia = sentencia + "Prod_Stock = " + strconv.Itoa(p.ProdStock)
+	}
+
+	if len(p.ProdPath) > 0 {
+		if !strings.HasSuffix(sentencia, "SET ") {
+			sentencia = sentencia + ", "
+		}
+		sentencia = sentencia + "Prod_Path = '" + p.ProdPath + "'"
+	}
+
+	sentencia = sentencia + " WHERE Prod_Id = " + strconv.Itoa(p.ProdID)
+
+	_, err = Db.Exec(sentencia)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+
+	fmt.Println("Update Product > Ejecución exitosa ")
+	return nil
 }
