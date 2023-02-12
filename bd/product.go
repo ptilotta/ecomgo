@@ -20,7 +20,6 @@ func InsertProduct(p models.Product) (int64, error) {
 	defer Db.Close()
 
 	/* Armo INSERT para el registro */
-	//	sentencia := "INSERT INTO products (Prod_Title, Prod_CreatedAt "
 	sentencia := "INSERT INTO products (Prod_Title "
 
 	if len(p.ProdDescription) > 0 {
@@ -43,7 +42,6 @@ func InsertProduct(p models.Product) (int64, error) {
 		sentencia = sentencia + ", Prod_Path"
 	}
 
-	//	sentencia = sentencia + ") VALUES ('" + p.ProdTitle + "','" + tools.FechaMySQL() + "'"
 	sentencia = sentencia + ") VALUES ('" + p.ProdTitle + "'"
 
 	if len(p.ProdDescription) > 0 {
