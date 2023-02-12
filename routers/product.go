@@ -39,20 +39,13 @@ func InsertProduct(body string, User string) (int, string) {
 /*SelectProduct es la funcion para crear en la BD el registro de producto */
 func SelectProduct(body string, request events.APIGatewayV2HTTPRequest) (int, string) {
 	var t models.Product
-	err := json.Unmarshal([]byte(body), &t)
-
-	if err != nil {
-		return 400, "Error en los datos recibidos " + err.Error()
-	}
+	var err error
 
 	// Proceso los parámetros recibidos
-	_, exists := request.QueryStringParameters["prodId"]
-	if !exists {
-		t.ProdID, err = strconv.Atoi(request.QueryStringParameters["prodId"])
-	}
-
-	if t.ProdID == 0 {
+	if len(request.QueryStringParameters["prodId"]) == 0 {
 		return 400, "Debe especificar el ID del Producto"
+	} else {
+		t.ProdID, err = strconv.Atoi(request.QueryStringParameters["prodId"])
 	}
 
 	result, err2 := bd.SelectProduct(t)
