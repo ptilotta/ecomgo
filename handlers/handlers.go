@@ -33,6 +33,8 @@ func Manejadores(path string, method string, body string, headers map[string]str
 		if method == "PUT" {
 			return routers.UpdateStock(body, User)
 		}
+	case "/default/ecommerce/category":
+		return CategoryCRUD(body, path, method, User)
 	}
 
 	return 200, "Todo OK"
@@ -42,6 +44,7 @@ func validoAuthorization(path string, method string, headers map[string]string) 
 	if path == "/default/ecommerce/user/me" ||
 		path == "/default/ecommerce/users" ||
 		path == "/default/ecommerce/stock" ||
+		path == "/default/ecommerce/category" ||
 		(path == "/default/ecommerce/product" && method != "GET") {
 
 		fmt.Println(headers)
@@ -94,6 +97,15 @@ func ProductCRUD(body string, path string, method string, user string) (int, str
 		return routers.UpdateProduct(body, user)
 	case "DELETE":
 		return routers.DeleteProduct(body, user)
+	}
+	return 400, "Method Invalid"
+}
+
+func CategoryCRUD(body string, path string, method string, user string) (int, string) {
+	fmt.Println("Voy a procesar " + path + " > " + method)
+	switch method {
+	case "POST":
+		return routers.InsertCategory(body, user)
 	}
 	return 400, "Method Invalid"
 }

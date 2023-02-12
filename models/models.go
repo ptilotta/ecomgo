@@ -41,3 +41,10 @@ type Product struct {
 	ProdCategId     int     `json:"prodCategId"`
 	ProdPath        string  `json:"prodPath"`
 }
+
+type Category struct {
+	CategID   int    `json:"categID"`
+	CategName string `json:"categName"`
+	CategPath string `json:"categPath"`
+	CategPage string `json:"categPage"`
+}
