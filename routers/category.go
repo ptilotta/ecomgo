@@ -2,6 +2,7 @@ package routers
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -72,6 +73,7 @@ func SelectCategory(body string, request events.APIGatewayV2HTTPRequest) (int, s
 	var t models.Category
 	var err error
 
+	fmt.Println(request.QueryStringParameters)
 	// Proceso los parámetros recibidos
 	_, exists := request.QueryStringParameters["categId"]
 	if !exists {
