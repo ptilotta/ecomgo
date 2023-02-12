@@ -41,6 +41,7 @@ func Manejadores(path string, method string, body string, headers map[string]str
 func validoAuthorization(path string, method string, headers map[string]string) (bool, int, string) {
 	if path == "/default/ecommerce/user/me" ||
 		path == "/default/ecommerce/users" ||
+		path == "/default/ecommerce/stock" ||
 		(path == "/default/ecommerce/product" && method != "GET") {
 
 		fmt.Println(headers)

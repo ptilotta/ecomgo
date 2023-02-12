@@ -2,7 +2,6 @@ package routers
 
 import (
 	"encoding/json"
-	"fmt"
 	"strconv"
 
 	"github.com/ptilotta/ecomgo/bd"
@@ -118,8 +117,6 @@ func UpdateStock(body string, User string) (int, string) {
 	}
 
 	// Chequeamos que sea Admin quien hace la petición
-	fmt.Println(t)
-	fmt.Println("User = " + User)
 	isAdmin, msg := bd.UserIsAdmin(User)
 	if !isAdmin {
 		return 400, msg
