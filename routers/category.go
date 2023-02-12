@@ -70,11 +70,7 @@ func UpdateCategory(body string, User string) (int, string) {
 /*SelectCategory es la funcion para leer el registro de categoría */
 func SelectCategory(body string, request events.APIGatewayV2HTTPRequest) (int, string) {
 	var t models.Category
-	err := json.Unmarshal([]byte(body), &t)
-
-	if err != nil {
-		return 400, "Error en los datos recibidos " + err.Error()
-	}
+	var err error
 
 	// Proceso los parámetros recibidos
 	_, exists := request.QueryStringParameters["categId"]
