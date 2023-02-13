@@ -40,17 +40,29 @@ func InsertProduct(body string, User string) (int, string) {
 func SelectProduct(body string, request events.APIGatewayV2HTTPRequest) (int, string) {
 	var t models.Product
 	var err error
+	param := request.QueryStringParameters
 
-	// Proceso los parámetros recibidos
-	if len(request.QueryStringParameters["prodId"]) == 0 {
-		return 400, "Debe especificar el ID del Producto"
-	} else {
-		t.ProdID, err = strconv.Atoi(request.QueryStringParameters["prodId"])
+	var choice string
+	if len(param["prodId"]) > 0 {
+		choice = "P"
+		t.ProdID, _ = strconv.Atoi(param["prodId"])
+	}
+	if len(param["search"]) > 0 {
+		choice = "S"
+		t.ProdSearch = param["search"]
+	}
+	if len(param["categId"]) > 0 {
+		choice = "C"
+		t.ProdCategId, _ = strconv.Atoi(param["categId"])
 	}
 
-	result, err2 := bd.SelectProduct(t)
+	if len(choice) == 0 {
+		return 400, "Debe especificar el ID del Producto o el parámetro 'search' o el Id de una categoría"
+	}
+
+	result, err2 := bd.SelectProduct(t, choice)
 	if err2 != nil {
-		return 400, "Ocurrió un error al intentar capturar el registro del producto " + strconv.Itoa(t.ProdID) + " > " + err.Error()
+		return 400, "Ocurrió un error al intentar capturar los resultados de la búsqueda de tipo '" + choice + "' en productos > " + err.Error()
 	}
 
 	Product, err3 := json.Marshal(result)

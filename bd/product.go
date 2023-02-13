@@ -84,9 +84,11 @@ func InsertProduct(p models.Product) (int64, error) {
 	return LastInsertId, err
 }
 
-func SelectProduct(p models.Product) (models.Product, error) {
+func SelectProduct(p models.Product, choice string) ([]models.Product, error) {
 	fmt.Println("Comienza SelectProduct")
-	var Prod models.Product
+	var Prod []models.Product
+	var sentencia string = "SELECT Prod_Title, Prod_Description, Prod_CreatedAt, Prod_Updated, Prod_Price, Prod_Status, Prod_Path, Prod_CategoryId, Prod_Stock FROM products "
+
 	err := DbConnnect()
 	if err != nil {
 		return Prod, err
@@ -94,7 +96,14 @@ func SelectProduct(p models.Product) (models.Product, error) {
 	defer Db.Close()
 
 	/* Armo SELECT para el registro */
-	sentencia := "SELECT Prod_Title, Prod_Description, Prod_CreatedAt, Prod_Updated, Prod_Price, Prod_Status, Prod_Path, Prod_CategoryId, Prod_Stock FROM products WHERE Prod_Id = " + strconv.Itoa(p.ProdID)
+	switch choice {
+	case "P":
+		sentencia = sentencia + " WHERE Prod_Id = " + strconv.Itoa(p.ProdID)
+	case "S":
+		sentencia = sentencia + " WHERE UCASE(CONCAT(Prod_Title, Prod_Description)) LIKE '%" + strings.ToUpper(p.ProdSearch) + "%'"
+	case "C":
+		sentencia = sentencia + " WHERE Prod_CategoryId = " + strconv.Itoa(p.ProdCategId)
+	}
 
 	var rows *sql.Rows
 	rows, err = Db.Query(sentencia)
@@ -105,28 +114,35 @@ func SelectProduct(p models.Product) (models.Product, error) {
 		return Prod, err
 	}
 
-	rows.Next()
+	for rows.Next() {
+		var p models.Product
+		var prodTitle sql.NullString
+		var prodDescription sql.NullString
+		var prodCreatedAt sql.NullTime
+		var prodUpdated sql.NullTime
+		var prodPrice sql.NullFloat64
+		var prodStatus sql.NullInt16
+		var prodPath sql.NullString
+		var prodCategoryId sql.NullInt32
+		var prodStock sql.NullInt32
 
-	var prodTitle sql.NullString
-	var prodDescription sql.NullString
-	var prodCreatedAt sql.NullTime
-	var prodUpdated sql.NullTime
-	var prodPrice sql.NullFloat64
-	var prodStatus sql.NullInt16
-	var prodPath sql.NullString
-	var prodCategoryId sql.NullInt32
-	var prodStock sql.NullInt32
-	rows.Scan(&prodTitle, &prodDescription, &prodCreatedAt, &prodUpdated, &prodPrice, &prodStatus, &prodPath, &prodCategoryId, &prodStock)
+		err := rows.Scan(&prodTitle, &prodDescription, &prodCreatedAt, &prodUpdated, &prodPrice, &prodStatus, &prodPath, &prodCategoryId, &prodStock)
 
-	Prod.ProdTitle = prodTitle.String
-	Prod.ProdDescription = prodDescription.String
-	Prod.ProdCreatedAt = prodCreatedAt.Time.String()
-	Prod.ProdUpdated = prodUpdated.Time.String()
-	Prod.ProdPrice = prodPrice.Float64
-	Prod.ProdStatus = int(prodStatus.Int16)
-	Prod.ProdPath = prodPath.String
-	Prod.ProdCategId = int(prodCategoryId.Int32)
-	Prod.ProdStock = int(prodStock.Int32)
+		if err != nil {
+			return Prod, err
+		}
+
+		p.ProdTitle = prodTitle.String
+		p.ProdDescription = prodDescription.String
+		p.ProdCreatedAt = prodCreatedAt.Time.String()
+		p.ProdUpdated = prodUpdated.Time.String()
+		p.ProdPrice = prodPrice.Float64
+		p.ProdStatus = int(prodStatus.Int16)
+		p.ProdPath = prodPath.String
+		p.ProdCategId = int(prodCategoryId.Int32)
+		p.ProdStock = int(prodStock.Int32)
+		Prod = append(Prod, p)
+	}
 
 	fmt.Println("Select Product > Ejecución exitosa ")
 	return Prod, err
