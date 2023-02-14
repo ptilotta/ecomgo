@@ -19,7 +19,7 @@ func InsertOrder(o models.Orders) (int64, error) {
 	defer Db.Close()
 
 	/* Armo INSERT para el registro */
-	sentencia := "INSERT INTO orders (Order_UserUUID, Order_Total) VALUES ('" + o.Order_UserUUID + "'," + strconv.FormatFloat(o.Order_Total, 'e', -1, 64) + ")"
+	sentencia := "INSERT INTO orders (Order_UserUUID, Order_Total) VALUES ('" + o.Order_UserUUID + "'," + strconv.FormatFloat(o.Order_Total, 'f', -1, 64) + ")"
 
 	var result sql.Result
 	result, err = Db.Exec(sentencia)
@@ -38,7 +38,7 @@ func InsertOrder(o models.Orders) (int64, error) {
 	for _, od := range o.OrderDetails {
 		sentencia = "INSERT INTO orders_detail (OD_OrderId, OD_ProdId, OD_Quantity, OD_Price) VALUES (" + strconv.Itoa(int(LastInsertId))
 		sentencia = sentencia + "," + strconv.Itoa(od.OD_ProdId) + "," + strconv.Itoa(od.OD_Quantity) + ","
-		sentencia = sentencia + "," + strconv.FormatFloat(o.Order_Total, 'e', -1, 64) + ")"
+		sentencia = sentencia + strconv.FormatFloat(od.OD_Price, 'f', -1, 64) + ")"
 
 		fmt.Println(sentencia)
 		_, err = Db.Exec(sentencia)
