@@ -26,6 +26,10 @@ func SelectOrder(body string, request events.APIGatewayV2HTTPRequest) (int, stri
 		return 400, "Ocurrió un error al intentar capturar el registro de la orden " + strconv.Itoa(o.Order_Id) + " > " + err.Error()
 	}
 
+	if result.Order_Total == 0 {
+		return 400, "Orden " + strconv.Itoa(o.Order_Id) + " no existe "
+	}
+
 	Order, err3 := json.Marshal(result)
 	if err3 != nil {
 		return 400, "Ocurrió un error al intentar convertir en JSON el registro de Orden"
