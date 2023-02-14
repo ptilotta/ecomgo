@@ -49,3 +49,19 @@ type Category struct {
 	CategPath string `json:"categPath"`
 	CategPage string `json:"categPage"`
 }
+
+type OrdersDetails struct {
+	OD_Id       int     `json:"odId"`
+	OD_OrderId  int     `json:"odOrderId"`
+	OD_ProdId   int     `json:"odProdId"`
+	OD_Quantity int     `json:"odQuantity"`
+	OD_Price    float64 `json:"odPrice"`
+}
+
+type Orders struct {
+	Order_Id       int     `json:"orderId"`
+	Order_UserUUID string  `json:"orderUserUUID"`
+	Order_Date     string  `json:"orderDate"`
+	Order_Total    float64 `json:"orderTotal"`
+	OrderDetails   []OrdersDetails
+}

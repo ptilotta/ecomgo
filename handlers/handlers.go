@@ -36,6 +36,8 @@ func Manejadores(path string, method string, body string, headers map[string]str
 		}
 	case "/default/ecommerce/category":
 		return CategoryCRUD(body, path, method, User, request)
+	case "/default/ecommerce/order":
+		return OrderCRUD(body, path, method, User, request)
 	}
 
 	return 200, "Todo OK"
@@ -46,6 +48,7 @@ func validoAuthorization(path string, method string, headers map[string]string) 
 		path == "/default/ecommerce/users" ||
 		path == "/default/ecommerce/stock" ||
 		path == "/default/ecommerce/category" ||
+		path == "/default/ecommerce/order" ||
 		(path == "/default/ecommerce/product" && method != "GET") {
 
 		fmt.Println(headers)
@@ -111,6 +114,17 @@ func CategoryCRUD(body string, path string, method string, user string, request 
 		return routers.UpdateCategory(body, user)
 	case "GET":
 		return routers.SelectCategory(body, request)
+	}
+	return 400, "Method Invalid"
+}
+
+func OrderCRUD(body string, path string, method string, user string, request events.APIGatewayV2HTTPRequest) (int, string) {
+	fmt.Println("Voy a procesar " + path + " > " + method)
+	switch method {
+	case "POST":
+		return routers.InsertOrder(body, user)
+	case "GET":
+		return routers.SelectOrder(body, request)
 	}
 	return 400, "Method Invalid"
 }
