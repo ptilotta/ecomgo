@@ -55,7 +55,7 @@ func SelectOrder(o models.Orders) (models.Orders, error) {
 	fmt.Println("Comienza SelectOrder")
 	var Order models.Orders
 	var sentencia string = "SELECT Order_Id, Order_UserUUID, Order_Date, Order_Total, OD_Id, OD_ProdId, OD_Quantity, OD_Price "
-	sentencia = sentencia + " FROM orders o JOIN order_details od ON o.Order_Id = od.OD_OrderId "
+	sentencia = sentencia + " FROM orders o JOIN orders_detail od ON o.Order_Id = od.OD_OrderId "
 	sentencia = sentencia + " WHERE Order_Id = " + strconv.Itoa(o.Order_Id)
 
 	err := DbConnnect()
