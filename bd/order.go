@@ -40,6 +40,7 @@ func InsertOrder(o models.Orders) (int64, error) {
 		sentencia = sentencia + "," + strconv.Itoa(od.OD_ProdId) + "," + strconv.Itoa(od.OD_Quantity) + ","
 		sentencia = sentencia + "," + strconv.FormatFloat(o.Order_Total, 'e', -1, 64) + ")"
 
+		fmt.Println(sentencia)
 		_, err = Db.Exec(sentencia)
 		if err != nil {
 			fmt.Println(err.Error())
