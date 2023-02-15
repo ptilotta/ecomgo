@@ -116,7 +116,7 @@ func SelectOrders(fechaDesde string, fechaHasta string, page int) ([]models.Orde
 	var sentencia string = "SELECT Order_Id, Order_UserUUID, Order_Date, Order_Total, OD_Id, OD_ProdId, OD_Quantity, OD_Price "
 	sentencia = sentencia + " FROM orders o JOIN orders_detail od ON o.Order_Id = od.OD_OrderId "
 	if len(fechaDesde) > 0 && len(fechaHasta) > 0 {
-		sentencia = sentencia + " WHERE Order_Date BETWEEN '" + fechaDesde + "' AND '" + fechaHasta
+		sentencia = sentencia + " WHERE Order_Date BETWEEN '" + fechaDesde + "' AND '" + fechaHasta + "'"
 	}
 	sentencia = sentencia + " LIMIT 10 OFFSET " + strconv.Itoa(offset)
 
