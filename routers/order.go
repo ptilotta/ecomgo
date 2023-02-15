@@ -111,10 +111,6 @@ func SelectOrders(user string, request events.APIGatewayV2HTTPRequest) (int, str
 		return 400, "Ocurrió un error al intentar capturar los registros ordenes del " + fechaDesde + " al " + fechaHasta + " > " + err.Error()
 	}
 
-	if result[1].Order_Total == 0 {
-		return 400, "No hay Ordenes para ese rango de fechas "
-	}
-
 	Orders, err3 := json.Marshal(result)
 	if err3 != nil {
 		return 400, "Ocurrió un error al intentar convertir en JSON el registro de Orden"
