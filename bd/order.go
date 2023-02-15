@@ -135,8 +135,6 @@ func SelectOrders(fechaDesde string, fechaHasta string, page int) ([]models.Orde
 		return Orders, err
 	}
 
-	rows.Next()
-
 	for rows.Next() {
 		var Order models.Orders
 		var OrderDate sql.NullTime
