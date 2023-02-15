@@ -124,6 +124,7 @@ func SelectOrders(fechaDesde string, fechaHasta string, page int) ([]models.Orde
 		sentencia = sentencia + " OFFSET " + strconv.Itoa(offset)
 	}
 
+	fmt.Println(sentencia)
 	err := DbConnnect()
 	if err != nil {
 		return Orders, err
