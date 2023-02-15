@@ -38,6 +38,11 @@ func Manejadores(path string, method string, body string, headers map[string]str
 		return CategoryCRUD(body, path, method, User, request)
 	case "/default/ecommerce/order":
 		return OrderCRUD(body, path, method, User, request)
+	case "/default/ecommerce/orders":
+		if method == "GET" {
+			fmt.Println("Voy al routers.SelectOrders(User, request)")
+			return routers.SelectOrders(User, request)
+		}
 	}
 
 	return 200, "Todo OK"
@@ -49,6 +54,7 @@ func validoAuthorization(path string, method string, headers map[string]string) 
 		path == "/default/ecommerce/stock" ||
 		path == "/default/ecommerce/category" ||
 		path == "/default/ecommerce/order" ||
+		path == "/default/ecommerce/orders" ||
 		(path == "/default/ecommerce/product" && method != "GET") {
 
 		fmt.Println(headers)

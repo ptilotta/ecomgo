@@ -88,3 +88,37 @@ func ValidOrder(o models.Orders) (bool, string) {
 	}
 	return true, ""
 }
+
+/*SelectOrders es la funcion para leer las ordenes por rango de fechas y paginado */
+func SelectOrders(user string, request events.APIGatewayV2HTTPRequest) (int, string) {
+	var err error
+	var fechaDesde, fechaHasta string
+	var page int
+
+	// Proceso los parámetros recibidos
+	if len(request.QueryStringParameters["fechaDesde"]) > 0 {
+		fechaDesde = request.QueryStringParameters["fechaDesde"]
+	}
+	if len(request.QueryStringParameters["fechaHasta"]) > 0 {
+		fechaHasta = request.QueryStringParameters["fechaHasta"]
+	}
+	if len(request.QueryStringParameters["page"]) > 0 {
+		page, _ = strconv.Atoi(request.QueryStringParameters["fechaHasta"])
+	}
+
+	result, err2 := bd.SelectOrders(fechaDesde, fechaHasta, page)
+	if err2 != nil {
+		return 400, "Ocurrió un error al intentar capturar los registros ordenes del " + fechaDesde + " al " + fechaHasta + " > " + err.Error()
+	}
+
+	if result[0].Order_Total == 0 {
+		return 400, "No hay Ordenes para ese rango de fechas "
+	}
+
+	Orders, err3 := json.Marshal(result)
+	if err3 != nil {
+		return 400, "Ocurrió un error al intentar convertir en JSON el registro de Orden"
+	}
+
+	return 200, string(Orders)
+}

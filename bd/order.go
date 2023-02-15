@@ -101,3 +101,66 @@ func SelectOrder(o models.Orders) (models.Orders, error) {
 	fmt.Println("Select Order > Ejecución exitosa ")
 	return Order, err
 }
+
+func SelectOrders(fechaDesde string, fechaHasta string, page int) ([]models.Orders, error) {
+	fmt.Println("Comienza SelectOrders")
+	var Orders []models.Orders
+
+	offset := 0
+	if page == 0 {
+		page = 1
+	}
+	if page > 1 {
+		offset = (10 * (page - 1))
+	}
+	var sentencia string = "SELECT Order_Id, Order_UserUUID, Order_Date, Order_Total, OD_Id, OD_ProdId, OD_Quantity, OD_Price "
+	sentencia = sentencia + " FROM orders o JOIN orders_detail od ON o.Order_Id = od.OD_OrderId "
+	if len(fechaDesde) > 0 && len(fechaHasta) > 0 {
+		sentencia = sentencia + " WHERE Order_Date BETWEEN '" + fechaDesde + "' AND '" + fechaHasta
+	}
+	sentencia = sentencia + " LIMIT 10 OFFSET " + strconv.Itoa(offset)
+
+	err := DbConnnect()
+	if err != nil {
+		return Orders, err
+	}
+	defer Db.Close()
+
+	var rows *sql.Rows
+	rows, err = Db.Query(sentencia)
+	defer rows.Close()
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return Orders, err
+	}
+
+	rows.Next()
+
+	for rows.Next() {
+		var Order models.Orders
+		var OrderDate sql.NullTime
+		var OD_Id int64
+		var OD_ProdId int64
+		var OD_Quantity int64
+		var OD_Price float64
+		err := rows.Scan(&Order.Order_Id, &Order.Order_UserUUID, &OrderDate, &Order.Order_Total, &OD_Id, &OD_ProdId, &OD_Quantity, &OD_Price)
+		Order.Order_Date = OrderDate.Time.String()
+
+		if err != nil {
+			return Orders, err
+		}
+
+		var od models.OrdersDetails
+		od.OD_Id = int(OD_Id)
+		od.OD_ProdId = int(OD_ProdId)
+		od.OD_Quantity = int(OD_Quantity)
+		od.OD_Price = OD_Price
+
+		Order.OrderDetails = append(Order.OrderDetails, od)
+		Orders = append(Orders, Order)
+	}
+
+	fmt.Println("Select Orders > Ejecución exitosa ")
+	return Orders, err
+}
