@@ -118,7 +118,10 @@ func SelectOrders(fechaDesde string, fechaHasta string, page int) ([]models.Orde
 	if len(fechaDesde) > 0 && len(fechaHasta) > 0 {
 		sentencia = sentencia + " WHERE Order_Date BETWEEN '" + fechaDesde + "' AND '" + fechaHasta + "'"
 	}
-	sentencia = sentencia + " LIMIT 10 OFFSET " + strconv.Itoa(offset)
+	sentencia = sentencia + " LIMIT 10 "
+	if offset > 0 {
+		sentencia = sentencia + " OFFSET " + strconv.Itoa(offset)
+	}
 
 	err := DbConnnect()
 	if err != nil {
