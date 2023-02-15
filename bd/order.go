@@ -114,6 +114,11 @@ func SelectOrders(fechaDesde string, fechaHasta string, page int) ([]models.Orde
 		fmt.Println("page = " + strconv.Itoa(page))
 		offset = (10 * (page - 1))
 	}
+
+	if len(fechaHasta) == 10 {
+		fechaHasta = fechaHasta + " 23:59:59"
+	}
+
 	var sentencia string = "SELECT Order_Id, Order_UserUUID, Order_Date, Order_Total, OD_Id, OD_ProdId, OD_Quantity, OD_Price "
 	sentencia = sentencia + " FROM orders o JOIN orders_detail od ON o.Order_Id = od.OD_OrderId "
 	if len(fechaDesde) > 0 && len(fechaHasta) > 0 {
