@@ -40,9 +40,7 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 	bd.ReadSecret()
 
 	status, message := handlers.Manejadores(path, method, body, headers, request)
-	mensaje, _ := json.Marshal(&Respuesta{
-		message,
-	})
+	mensaje, _ := json.Marshal(message)
 
 	res = &events.APIGatewayProxyResponse{
 		StatusCode: status,
