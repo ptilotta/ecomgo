@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"os"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -12,10 +13,6 @@ import (
 
 	lambda "github.com/aws/aws-lambda-go/lambda"
 )
-
-type Respuesta struct {
-	Message string `json:"message"`
-}
 
 func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*events.APIGatewayProxyResponse, error) {
 
@@ -31,17 +28,12 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 	body := request.Body
 	headers := request.Headers
 
-	/* fmt.Println("----------------------------------------------------------------")
-	fmt.Println("path = " + path)
-	fmt.Println("method = " + method)
-	fmt.Println("body = " + body)
-	fmt.Println("----------------------------------------------------------------")
-	*/
 	bd.ReadSecret()
 
 	status, message := handlers.Manejadores(path, method, body, headers, request)
 	mensaje, _ := json.Marshal(message)
 
+	fmt.Println(mensaje)
 	res = &events.APIGatewayProxyResponse{
 		StatusCode: status,
 		Body:       string(mensaje),
