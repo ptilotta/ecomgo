@@ -14,7 +14,6 @@ import (
 )
 
 type Respuesta struct {
-	Status  int    `json:"status"`
 	Message string `json:"message"`
 }
 
@@ -42,8 +41,7 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 
 	status, message := handlers.Manejadores(path, method, body, headers, request)
 	mensaje, _ := json.Marshal(&Respuesta{
-		Status:  status,
-		Message: message,
+		message,
 	})
 
 	res = &events.APIGatewayProxyResponse{
