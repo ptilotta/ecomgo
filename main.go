@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"os"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -33,10 +32,14 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 	status, message := handlers.Manejadores(path, method, body, headers, request)
 	mensaje, _ := json.Marshal(message)
 
-	fmt.Println(mensaje)
+	headersResp := map[string]string{
+		"Content-Type": "application/json",
+	}
+
 	res = &events.APIGatewayProxyResponse{
 		StatusCode: status,
 		Body:       string(mensaje),
+		Headers:    headersResp,
 	}
 	return res, nil
 }
