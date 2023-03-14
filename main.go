@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"net/http"
 	"os"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -36,7 +37,8 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 	}
 
 	res = &events.APIGatewayProxyResponse{
-		StatusCode: status,
+		//		StatusCode: status,
+		StatusCode: http.StatusNoContent,
 		Body:       string(message),
 		Headers:    headersResp,
 	}
