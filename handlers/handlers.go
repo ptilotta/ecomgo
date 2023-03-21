@@ -11,7 +11,6 @@ import (
 /*Manejadores seteo mi puerto, el Handler y pongo a escuchar al Servidor */
 func Manejadores(path string, method string, body string, headers map[string]string, request events.APIGatewayV2HTTPRequest) (int, string) {
 
-	fmt.Println("Entre en Manejadores")
 	var User string
 
 	isOk, statusCode, message := validoAuthorization(path, method, headers)
@@ -26,7 +25,6 @@ func Manejadores(path string, method string, body string, headers map[string]str
 		return UserCRUD(body, path, method, User, request)
 	case "/default/ecommerce/users":
 		if method == "GET" {
-			fmt.Println("Voy al routers.SelectUsers(body, User, request)")
 			return routers.SelectUsers(body, User, request)
 		}
 	case "/default/ecommerce/product":
@@ -36,7 +34,6 @@ func Manejadores(path string, method string, body string, headers map[string]str
 			return routers.UpdateStock(body, User)
 		}
 	case "/default/ecommerce/address":
-		fmt.Println("Entré aca")
 		return AddressCRUD(body, path, method, User, request)
 	case "/default/ecommerce/category":
 		return CategoryCRUD(body, path, method, User, request)
@@ -44,7 +41,6 @@ func Manejadores(path string, method string, body string, headers map[string]str
 		return OrderCRUD(body, path, method, User, request)
 	case "/default/ecommerce/orders":
 		if method == "GET" {
-			fmt.Println("Voy al routers.SelectOrders(User, request)")
 			return routers.SelectOrders(User, request)
 		}
 	}
