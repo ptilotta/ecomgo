@@ -11,6 +11,7 @@ import (
 /*Manejadores seteo mi puerto, el Handler y pongo a escuchar al Servidor */
 func Manejadores(path string, method string, body string, headers map[string]string, request events.APIGatewayV2HTTPRequest) (int, string) {
 
+	fmt.Println("Entre en Manejadores")
 	var User string
 
 	isOk, statusCode, message := validoAuthorization(path, method, headers)
