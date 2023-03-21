@@ -35,6 +35,7 @@ func Manejadores(path string, method string, body string, headers map[string]str
 			return routers.UpdateStock(body, User)
 		}
 	case "/default/ecommerce/address":
+		fmt.Println("Entré aca")
 		return AddressCRUD(body, path, method, User, request)
 	case "/default/ecommerce/category":
 		return CategoryCRUD(body, path, method, User, request)
