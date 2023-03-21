@@ -141,7 +141,7 @@ func DeleteAddress(addr models.Address) error {
 	defer Db.Close()
 
 	/* Armo DELETE para el registro */
-	sentencia := "DELETE FROM addresses WHERE Add_Id=" + strconv.Itoa(addr.AddId) + "'"
+	sentencia := "DELETE FROM addresses WHERE Add_Id=" + strconv.Itoa(addr.AddId)
 
 	_, err = Db.Exec(sentencia)
 
