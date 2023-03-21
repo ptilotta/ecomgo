@@ -92,7 +92,7 @@ func SelectAddreses(User string) ([]models.Address, error) {
 	/* Armo SELECT */
 	var sentencia string
 
-	sentencia = "Select * FROM addresses WHERE Add_UserId='" + User + "'"
+	sentencia = "Select Add_Id, Add_Address, Add_City, Add_State, Add_PostalCode, Add_Phone, Add_Title, Add_Name FROM addresses WHERE Add_UserId='" + User + "'"
 
 	var rows *sql.Rows
 	rows, err = Db.Query(sentencia)
