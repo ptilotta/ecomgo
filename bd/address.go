@@ -126,6 +126,7 @@ func SelectAddreses(User string) ([]models.Address, error) {
 		Addr = append(Addr, a)
 	}
 
+	fmt.Println(Addr)
 	fmt.Println("Select Addresses > Ejecución exitosa ")
 	return Addr, nil
 }
