@@ -68,7 +68,7 @@ func UpdateAddress(body string, User string) (int, string) {
 
 	err = bd.UpdateAddress(t)
 	if err != nil {
-		return 400, "Ocurrió un error al intentar realizar la actualización del Address para el ID de Usuario " + t.AddUserId + " > " + err.Error()
+		return 400, "Ocurrió un error al intentar realizar la actualización del Address para el ID de Usuario " + User + " > " + err.Error()
 	}
 
 	return 200, "UpdateAddress OK"
