@@ -104,6 +104,7 @@ func SelectAddreses(User string) ([]models.Address, error) {
 	}
 	for rows.Next() {
 		var a models.Address
+		var addId sql.NullInt16
 		var addAddress sql.NullString
 		var addCity sql.NullString
 		var addState sql.NullString
@@ -112,10 +113,11 @@ func SelectAddreses(User string) ([]models.Address, error) {
 		var addTitle sql.NullString
 		var addName sql.NullString
 
-		err := rows.Scan(&addAddress, &addCity, &addState, &addPostalCode, &addPhone, &addTitle, &addName)
+		err := rows.Scan(&addId, &addAddress, &addCity, &addState, &addPostalCode, &addPhone, &addTitle, &addName)
 		if err != nil {
 			return Addr, err
 		}
+		a.AddId = int(addId.Int16)
 		a.AddAddress = addAddress.String
 		a.AddCity = addCity.String
 		a.AddState = addState.String
