@@ -34,6 +34,8 @@ func Manejadores(path string, method string, body string, headers map[string]str
 		if method == "PUT" {
 			return routers.UpdateStock(body, User)
 		}
+	case "/default/ecommerce/address":
+		return AddressCRUD(body, path, method, User, request)
 	case "/default/ecommerce/category":
 		return CategoryCRUD(body, path, method, User, request)
 	case "/default/ecommerce/order":
@@ -86,7 +88,7 @@ func validoAuthorization(path string, method string, headers map[string]string) 
 func UserCRUD(body string, path string, method string, user string, request events.APIGatewayV2HTTPRequest) (int, string) {
 	fmt.Println("Voy a procesar " + path + " > " + method + " para el user " + user)
 	switch method {
-	case "POST":
+	case "PUT":
 		return routers.UpdateUser(body, user)
 	case "GET":
 		return routers.SelectUser(body, user)
@@ -107,6 +109,21 @@ func ProductCRUD(body string, path string, method string, user string, request e
 		return routers.UpdateProduct(body, user)
 	case "DELETE":
 		return routers.DeleteProduct(body, user)
+	}
+	return 400, "Method Invalid"
+}
+
+func AddressCRUD(body string, path string, method string, user string, request events.APIGatewayV2HTTPRequest) (int, string) {
+	fmt.Println("Voy a procesar " + path + " > " + method)
+	switch method {
+	case "POST":
+		return routers.InsertAddress(body, user)
+	case "GET":
+		return routers.SelectAddresses(user)
+	case "PUT":
+		return routers.UpdateAddress(body, user)
+	case "DELETE":
+		return routers.DeleteAddress(body, user)
 	}
 	return 400, "Method Invalid"
 }

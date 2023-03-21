@@ -2,6 +2,7 @@ package bd
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"strconv"
 
@@ -19,9 +20,24 @@ func UpdateUser(UFields models.User) error {
 	}
 	defer Db.Close()
 
+	if len(UFields.UserFirstName) == 0 && len(UFields.UserLastName) == 0 {
+		errText := "UserFirstName or UserLastName are required"
+		fmt.Println(errText)
+		return errors.New(errText)
+	}
+
 	/* Armo UPDATE para el registro */
-	sentencia := "UPDATE users SET User_FirstName='" + UFields.UserFirstName + "', User_LastName='" + UFields.UserLastName +
-		"', User_DateUpg='" + tools.FechaMySQL() + "' WHERE User_UUID='" + UFields.UserUUID + "'"
+	sentencia := "UPDATE users SET "
+
+	coma := ""
+	if len(UFields.UserFirstName) > 0 {
+		coma = ","
+		sentencia += "User_FirstName='" + UFields.UserFirstName + "'"
+	}
+	if len(UFields.UserLastName) > 0 {
+		sentencia += coma + "User_FirstName='" + UFields.UserLastName + "'"
+	}
+	sentencia += ", User_DateUpg='" + tools.FechaMySQL() + "' WHERE User_UUID='" + UFields.UserUUID + "'"
 
 	_, err = Db.Exec(sentencia)
 	if err != nil {

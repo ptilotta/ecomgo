@@ -65,3 +65,14 @@ type Orders struct {
 	Order_Total    float64 `json:"orderTotal"`
 	OrderDetails   []OrdersDetails
 }
+
+type Address struct {
+	AddId         int    `json:"addId"`
+	AddTitle      string `json:"addTitle"`
+	AddName       string `json:"addName"`
+	AddAddress    string `json:"addAddress"`
+	AddCity       string `json:"addCity"`
+	AddState      string `json:"addState"`
+	AddPostalCode string `json:"addPostalCode"`
+	AddPhone      string `json:"addPhone"`
+}
