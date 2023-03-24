@@ -197,8 +197,8 @@ func SelectOrders(user string, fechaDesde string, fechaHasta string, page int) (
 			od.OD_Price = OD_Price
 
 			Order.OrderDetails = append(Order.OrderDetails, od)
-			Orders = append(Orders, Order)
 		}
+		Orders = append(Orders, Order)
 
 		rowsD.Close()
 	}
