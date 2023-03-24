@@ -139,6 +139,10 @@ func SelectCategories() ([]models.Category, error) {
 
 		err := rows.Scan(&categId, &categName, &categPath)
 
+		c.CategID = int(categId.Int32)
+		c.CategName = categName.String
+		c.CategPath = categPath.String
+
 		if err != nil {
 			return Categ, err
 		}
