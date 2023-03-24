@@ -168,7 +168,7 @@ func SelectOrders(user string, fechaDesde string, fechaHasta string, page int) (
 		var Order models.Orders
 		var OrderDate sql.NullTime
 		var OrderAddId sql.NullInt32
-		err := rows.Scan(&Order.Order_Id, &Order.Order_UserUUID, &OrderAddId, &OrderDate, &Order.Order_Total, &OD_Id, &OD_ProdId, &OD_Quantity, &OD_Price)
+		err := rows.Scan(&Order.Order_Id, &Order.Order_UserUUID, &OrderAddId, &OrderDate, &Order.Order_Total)
 		Order.Order_Date = OrderDate.Time.String()
 		Order.Order_AddId = int(OrderAddId.Int32)
 
