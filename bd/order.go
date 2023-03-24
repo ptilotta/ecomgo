@@ -181,21 +181,25 @@ func SelectOrders(user string, fechaDesde string, fechaHasta string, page int) (
 		fmt.Println(sentenciaD)
 		rowsD, err = Db.Query(sentenciaD)
 
-		var OD_Id int64
-		var OD_ProdId int64
-		var OD_Quantity int64
-		var OD_Price float64
+		for rows.Next() {
 
-		err = rowsD.Scan(&OD_Id, &OD_ProdId, &OD_Quantity, &OD_Price)
+			var OD_Id int64
+			var OD_ProdId int64
+			var OD_Quantity int64
+			var OD_Price float64
 
-		var od models.OrdersDetails
-		od.OD_Id = int(OD_Id)
-		od.OD_ProdId = int(OD_ProdId)
-		od.OD_Quantity = int(OD_Quantity)
-		od.OD_Price = OD_Price
+			err = rowsD.Scan(&OD_Id, &OD_ProdId, &OD_Quantity, &OD_Price)
 
-		Order.OrderDetails = append(Order.OrderDetails, od)
-		Orders = append(Orders, Order)
+			var od models.OrdersDetails
+			od.OD_Id = int(OD_Id)
+			od.OD_ProdId = int(OD_ProdId)
+			od.OD_Quantity = int(OD_Quantity)
+			od.OD_Price = OD_Price
+
+			Order.OrderDetails = append(Order.OrderDetails, od)
+			Orders = append(Orders, Order)
+		}
+
 		rowsD.Close()
 	}
 
