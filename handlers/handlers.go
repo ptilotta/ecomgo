@@ -37,6 +37,8 @@ func Manejadores(path string, method string, body string, headers map[string]str
 		return AddressCRUD(body, path, method, User, request)
 	case "/default/ecommerce/category":
 		return CategoryCRUD(body, path, method, User, request)
+	case "/default/ecommerce/categories":
+		return routers.SelectCategories()
 	case "/default/ecommerce/order":
 		return OrderCRUD(body, path, method, User, request)
 	case "/default/ecommerce/orders":
