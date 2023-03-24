@@ -75,8 +75,6 @@ func SelectOrder(o models.Orders) (models.Orders, error) {
 		return Order, err
 	}
 
-	//rows.Next()
-
 	for rows.Next() {
 		var OrderDate sql.NullTime
 		var Order_AddId sql.NullInt32
