@@ -103,10 +103,10 @@ func SelectOrders(user string, request events.APIGatewayV2HTTPRequest) (int, str
 		fechaHasta = request.QueryStringParameters["fechaHasta"]
 	}
 	if len(request.QueryStringParameters["page"]) > 0 {
-		page, _ = strconv.Atoi(request.QueryStringParameters["fechaHasta"])
+		page, _ = strconv.Atoi(request.QueryStringParameters["page"])
 	}
 
-	result, err2 := bd.SelectOrders(fechaDesde, fechaHasta, page)
+	result, err2 := bd.SelectOrders(user, fechaDesde, fechaHasta, page)
 	if err2 != nil {
 		return 400, "Ocurrió un error al intentar capturar los registros ordenes del " + fechaDesde + " al " + fechaHasta + " > " + err.Error()
 	}

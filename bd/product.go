@@ -84,35 +84,85 @@ func InsertProduct(p models.Product) (int64, error) {
 	return LastInsertId, err
 }
 
-func SelectProduct(p models.Product, choice string) ([]models.Product, error) {
+func SelectProduct(p models.Product, choice string, page int, pageSize int, orderType string, orderField string) (models.ProductResp, error) {
 	fmt.Println("Comienza SelectProduct")
+	var Resp models.ProductResp
 	var Prod []models.Product
-	var sentencia string = "SELECT Prod_Title, Prod_Description, Prod_CreatedAt, Prod_Updated, Prod_Price, Prod_Status, Prod_Path, Prod_CategoryId, Prod_Stock FROM products "
 
 	err := DbConnnect()
 	if err != nil {
-		return Prod, err
+		return Resp, err
 	}
 	defer Db.Close()
 
 	/* Armo SELECT para el registro */
+	var where, limit string
+	var sentencia string = "SELECT Prod_Title, Prod_Description, Prod_CreatedAt, Prod_Updated, Prod_Price, Prod_Status, Prod_Path, Prod_CategoryId, Prod_Stock FROM products "
+	var sentenciaCount string = "SELECT count(*) as registros FROM products "
+
 	switch choice {
 	case "P":
-		sentencia = sentencia + " WHERE Prod_Id = " + strconv.Itoa(p.ProdID)
+		where = " WHERE Prod_Id = " + strconv.Itoa(p.ProdID)
 	case "S":
-		sentencia = sentencia + " WHERE UCASE(CONCAT(Prod_Title, Prod_Description)) LIKE '%" + strings.ToUpper(p.ProdSearch) + "%'"
+		where = " WHERE UCASE(CONCAT(Prod_Title, Prod_Description)) LIKE '%" + strings.ToUpper(p.ProdSearch) + "%'"
 	case "C":
-		sentencia = sentencia + " WHERE Prod_CategoryId = " + strconv.Itoa(p.ProdCategId)
+		where = " WHERE Prod_CategoryId = " + strconv.Itoa(p.ProdCategId)
 	}
 
+	sentencia += where
+	sentenciaCount += where
+
 	var rows *sql.Rows
-	rows, err = Db.Query(sentencia)
+	rows, err = Db.Query(sentenciaCount)
 	defer rows.Close()
 
 	if err != nil {
 		fmt.Println(err.Error())
-		return Prod, err
+		return Resp, err
 	}
+
+	var regi sql.NullInt32
+	err = rows.Scan(&regi)
+	registros := int(regi.Int32)
+
+	if page > 0 {
+		if registros > pageSize {
+			limit = " LIMIT " + strconv.Itoa(pageSize)
+			if page > 1 {
+				offset := pageSize * (page - 1)
+				limit += " OFFSET " + strconv.Itoa(offset)
+			}
+		} else {
+			limit = ""
+		}
+	}
+
+	var orderBy string
+	if len(orderField) > 0 {
+		switch orderField {
+		case "I":
+			orderBy = " ORDER BY Prod_Id "
+		case "T":
+			orderBy = " ORDER BY Prod_Title "
+		case "D":
+			orderBy = " ORDER BY Prod_Description "
+		case "F":
+			orderBy = " ORDER BY Prod_CreatedAt "
+		case "P":
+			orderBy = " ORDER BY Prod_Price "
+		case "S":
+			orderBy = " ORDER BY Prod_Stock "
+		case "C":
+			orderBy = " ORDER BY Prod_CategoryId "
+		}
+		if orderType == "D" {
+			orderBy += " DESC"
+		}
+	}
+
+	sentencia += where + limit + orderBy
+
+	rows, err = Db.Query(sentencia)
 
 	for rows.Next() {
 		var p models.Product
@@ -129,7 +179,7 @@ func SelectProduct(p models.Product, choice string) ([]models.Product, error) {
 		err := rows.Scan(&prodTitle, &prodDescription, &prodCreatedAt, &prodUpdated, &prodPrice, &prodStatus, &prodPath, &prodCategoryId, &prodStock)
 
 		if err != nil {
-			return Prod, err
+			return Resp, err
 		}
 
 		p.ProdTitle = prodTitle.String
@@ -144,8 +194,10 @@ func SelectProduct(p models.Product, choice string) ([]models.Product, error) {
 		Prod = append(Prod, p)
 	}
 
+	Resp.CantRows = registros
+
 	fmt.Println("Select Product > Ejecución exitosa ")
-	return Prod, err
+	return Resp, err
 }
 
 func UpdateProduct(p models.Product) error {

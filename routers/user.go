@@ -32,7 +32,7 @@ func UpdateUser(body string, User string) (int, string) {
 		return 400, "No existe un usuario registrado con ese UUID"
 	}
 
-	err = bd.UpdateUser(t)
+	err = bd.UpdateUser(t, User)
 	if err != nil {
 		return 400, "Ocurrió un error al intentar realizar el registro del usuario " + User + " > " + err.Error()
 	}

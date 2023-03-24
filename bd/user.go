@@ -11,7 +11,7 @@ import (
 	"github.com/ptilotta/ecomgo/tools"
 )
 
-func UpdateUser(UFields models.User) error {
+func UpdateUser(UFields models.User, User string) error {
 	fmt.Println("Comienza Registro")
 
 	err := DbConnnect()
@@ -35,9 +35,9 @@ func UpdateUser(UFields models.User) error {
 		sentencia += "User_FirstName='" + UFields.UserFirstName + "'"
 	}
 	if len(UFields.UserLastName) > 0 {
-		sentencia += coma + "User_FirstName='" + UFields.UserLastName + "'"
+		sentencia += coma + "User_LastName='" + UFields.UserLastName + "'"
 	}
-	sentencia += ", User_DateUpg='" + tools.FechaMySQL() + "' WHERE User_UUID='" + UFields.UserUUID + "'"
+	sentencia += ", User_DateUpg='" + tools.FechaMySQL() + "' WHERE User_UUID='" + User + "'"
 
 	_, err = Db.Exec(sentencia)
 	if err != nil {

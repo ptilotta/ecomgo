@@ -107,3 +107,45 @@ func SelectCategory(c models.Category) (models.Category, error) {
 	fmt.Println("Select Category > Ejecución exitosa ")
 	return Categ, err
 }
+
+func SelectCategories() ([]models.Category, error) {
+	fmt.Println("Comienza SelectCategories")
+	var Categ []models.Category
+	err := DbConnnect()
+	if err != nil {
+		return Categ, err
+	}
+	defer Db.Close()
+
+	/* Armo SELECT para el registro */
+	sentencia := "SELECT Categ_Id, Categ_Name, Categ_Path FROM category "
+
+	var rows *sql.Rows
+	rows, err = Db.Query(sentencia)
+	defer rows.Close()
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return Categ, err
+	}
+
+	rows, err = Db.Query(sentencia)
+
+	for rows.Next() {
+		var c models.Category
+		var categId sql.NullInt32
+		var categName sql.NullString
+		var categPath sql.NullString
+
+		err := rows.Scan(&categId, &categName, &categPath)
+
+		if err != nil {
+			return Categ, err
+		}
+
+		Categ = append(Categ, c)
+	}
+
+	fmt.Println("Select Category > Ejecución exitosa ")
+	return Categ, err
+}

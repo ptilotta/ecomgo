@@ -3,6 +3,7 @@ package routers
 import (
 	"encoding/json"
 	"strconv"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/ptilotta/ecomgo/bd"
@@ -40,7 +41,20 @@ func InsertProduct(body string, User string) (int, string) {
 func SelectProduct(body string, request events.APIGatewayV2HTTPRequest) (int, string) {
 	var t models.Product
 	var err error
+	var page, pageSize int
+	var orderType, orderField string
+
 	param := request.QueryStringParameters
+
+	page, _ = strconv.Atoi(param["page"])
+	pageSize, _ = strconv.Atoi(param["pageSize"])
+	orderType = param["orderType"]   // D = Desc, A or null = Asc
+	orderField = param["orderField"] // 'I' or null, 'T' Title,   'D' Description, 'F' Created At,
+	// 'P' Price,   'C' CategId, 'S' Stock
+
+	if !strings.Contains("ITDFPCS", orderType) {
+		orderField = ""
+	}
 
 	var choice string
 	if len(param["prodId"]) > 0 {
@@ -60,7 +74,7 @@ func SelectProduct(body string, request events.APIGatewayV2HTTPRequest) (int, st
 		return 400, "Debe especificar el ID del Producto o el parámetro 'search' o el Id de una categoría"
 	}
 
-	result, err2 := bd.SelectProduct(t, choice)
+	result, err2 := bd.SelectProduct(t, choice, page, pageSize, orderType, orderField)
 	if err2 != nil {
 		return 400, "Ocurrió un error al intentar capturar los resultados de la búsqueda de tipo '" + choice + "' en productos > " + err.Error()
 	}

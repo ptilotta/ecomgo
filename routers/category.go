@@ -91,3 +91,20 @@ func SelectCategory(body string, request events.APIGatewayV2HTTPRequest) (int, s
 
 	return 200, string(Categ)
 }
+
+/*SelectCategory es la funcion para leer el registro de categoría */
+func SelectCategories() (int, string) {
+	var err error
+
+	result, err2 := bd.SelectCategories()
+	if err2 != nil {
+		return 400, "Ocurrió un error al intentar capturar los registros de las categorías > " + err.Error()
+	}
+
+	Categ, err3 := json.Marshal(result)
+	if err3 != nil {
+		return 400, "Ocurrió un error al intentar convertir en JSON los registros de Categorías"
+	}
+
+	return 200, string(Categ)
+}

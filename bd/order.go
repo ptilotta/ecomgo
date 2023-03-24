@@ -19,7 +19,8 @@ func InsertOrder(o models.Orders) (int64, error) {
 	defer Db.Close()
 
 	/* Armo INSERT para el registro */
-	sentencia := "INSERT INTO orders (Order_UserUUID, Order_Total) VALUES ('" + o.Order_UserUUID + "'," + strconv.FormatFloat(o.Order_Total, 'f', -1, 64) + ")"
+	sentencia := "INSERT INTO orders (Order_UserUUID, Order_Total, Order_AddId) VALUES ('"
+	sentencia += o.Order_UserUUID + "'," + strconv.FormatFloat(o.Order_Total, 'f', -1, 64) + "," + strconv.Itoa(o.Order_AddId) + ")"
 
 	var result sql.Result
 	result, err = Db.Exec(sentencia)
@@ -55,7 +56,7 @@ func InsertOrder(o models.Orders) (int64, error) {
 func SelectOrder(o models.Orders) (models.Orders, error) {
 	fmt.Println("Comienza SelectOrder")
 	var Order models.Orders
-	var sentencia string = "SELECT Order_Id, Order_UserUUID, Order_Date, Order_Total, OD_Id, OD_ProdId, OD_Quantity, OD_Price "
+	var sentencia string = "SELECT Order_Id, Order_UserUUID, Order_AddId, Order_Date, Order_Total, OD_Id, OD_ProdId, OD_Quantity, OD_Price "
 	sentencia = sentencia + " FROM orders o JOIN orders_detail od ON o.Order_Id = od.OD_OrderId "
 	sentencia = sentencia + " WHERE Order_Id = " + strconv.Itoa(o.Order_Id)
 
@@ -78,12 +79,14 @@ func SelectOrder(o models.Orders) (models.Orders, error) {
 
 	for rows.Next() {
 		var OrderDate sql.NullTime
+		var Order_AddId sql.NullInt32
 		var OD_Id int64
 		var OD_ProdId int64
 		var OD_Quantity int64
 		var OD_Price float64
-		err := rows.Scan(&Order.Order_Id, &Order.Order_UserUUID, &OrderDate, &Order.Order_Total, &OD_Id, &OD_ProdId, &OD_Quantity, &OD_Price)
+		err := rows.Scan(&Order.Order_Id, &Order.Order_UserUUID, &Order_AddId, &OrderDate, &Order.Order_Total, &OD_Id, &OD_ProdId, &OD_Quantity, &OD_Price)
 		Order.Order_Date = OrderDate.Time.String()
+		Order.Order_AddId = int(Order_AddId.Int32)
 
 		if err != nil {
 			return Order, err
@@ -102,7 +105,7 @@ func SelectOrder(o models.Orders) (models.Orders, error) {
 	return Order, err
 }
 
-func SelectOrders(fechaDesde string, fechaHasta string, page int) ([]models.Orders, error) {
+func SelectOrders(user string, fechaDesde string, fechaHasta string, page int) ([]models.Orders, error) {
 	fmt.Println("Comienza SelectOrders")
 	var Orders []models.Orders
 
@@ -119,14 +122,30 @@ func SelectOrders(fechaDesde string, fechaHasta string, page int) ([]models.Orde
 		fechaHasta = fechaHasta + " 23:59:59"
 	}
 
-	var sentencia string = "SELECT Order_Id, Order_UserUUID, Order_Date, Order_Total, OD_Id, OD_ProdId, OD_Quantity, OD_Price "
-	sentencia = sentencia + " FROM orders o JOIN orders_detail od ON o.Order_Id = od.OD_OrderId "
+	// Chequeamos que sea Admin quien hace la petición
+	isAdmin, _ := UserIsAdmin(user)
+
+	var sentencia string = "SELECT Order_Id, Order_UserUUID, Order_AddId, Order_Date, Order_Total, OD_Id, OD_ProdId, OD_Quantity, OD_Price "
+	sentencia += " FROM orders o JOIN orders_detail od ON o.Order_Id = od.OD_OrderId "
+
+	var where string
+	var whereUser string = " Order_UserUUID = '" + user + "'"
 	if len(fechaDesde) > 0 && len(fechaHasta) > 0 {
-		sentencia = sentencia + " WHERE Order_Date BETWEEN '" + fechaDesde + "' AND '" + fechaHasta + "'"
+		where += " WHERE Order_Date BETWEEN '" + fechaDesde + "' AND '" + fechaHasta + "'"
 	}
-	sentencia = sentencia + " LIMIT 10 "
+	if isAdmin {
+		whereUser = ""
+	} else {
+		if len(where) > 0 {
+			where += " AND " + whereUser
+		} else {
+			where += whereUser
+		}
+	}
+
+	limit := " LIMIT 10 "
 	if offset > 0 {
-		sentencia = sentencia + " OFFSET " + strconv.Itoa(offset)
+		limit += " OFFSET " + strconv.Itoa(offset)
 	}
 
 	fmt.Println(sentencia)
@@ -148,12 +167,14 @@ func SelectOrders(fechaDesde string, fechaHasta string, page int) ([]models.Orde
 	for rows.Next() {
 		var Order models.Orders
 		var OrderDate sql.NullTime
+		var OrderAddId sql.NullInt32
 		var OD_Id int64
 		var OD_ProdId int64
 		var OD_Quantity int64
 		var OD_Price float64
-		err := rows.Scan(&Order.Order_Id, &Order.Order_UserUUID, &OrderDate, &Order.Order_Total, &OD_Id, &OD_ProdId, &OD_Quantity, &OD_Price)
+		err := rows.Scan(&Order.Order_Id, &Order.Order_UserUUID, &OrderAddId, &OrderDate, &Order.Order_Total, &OD_Id, &OD_ProdId, &OD_Quantity, &OD_Price)
 		Order.Order_Date = OrderDate.Time.String()
+		Order.Order_AddId = int(OrderAddId.Int32)
 
 		if err != nil {
 			return Orders, err
