@@ -111,8 +111,6 @@ func SelectProduct(p models.Product, choice string, page int, pageSize int, orde
 
 	sentenciaCount += where
 
-	fmt.Println(sentenciaCount)
-
 	var rows *sql.Rows
 	rows, err = Db.Query(sentenciaCount)
 	defer rows.Close()
@@ -122,6 +120,7 @@ func SelectProduct(p models.Product, choice string, page int, pageSize int, orde
 		return Resp, err
 	}
 
+	rows.Next()
 	var regi sql.NullInt32
 	err = rows.Scan(&regi)
 	fmt.Printf("regi = %d, err= %s", regi.Int32, err.Error())
