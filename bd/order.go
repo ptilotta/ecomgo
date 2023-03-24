@@ -181,7 +181,7 @@ func SelectOrders(user string, fechaDesde string, fechaHasta string, page int) (
 		fmt.Println(sentenciaD)
 		rowsD, err = Db.Query(sentenciaD)
 
-		for rows.Next() {
+		for rowsD.Next() {
 
 			var OD_Id int64
 			var OD_ProdId int64
