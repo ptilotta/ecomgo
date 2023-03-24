@@ -124,6 +124,7 @@ func SelectProduct(p models.Product, choice string, page int, pageSize int, orde
 
 	var regi sql.NullInt32
 	err = rows.Scan(&regi)
+	fmt.Printf("regi = %d, err= %s", regi.Int32, err.Error())
 	registros := int(regi.Int32)
 
 	if page > 0 {
