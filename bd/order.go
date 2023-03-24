@@ -125,8 +125,7 @@ func SelectOrders(user string, fechaDesde string, fechaHasta string, page int) (
 	// Chequeamos que sea Admin quien hace la petición
 	isAdmin, _ := UserIsAdmin(user)
 
-	var sentencia string = "SELECT Order_Id, Order_UserUUID, Order_AddId, Order_Date, Order_Total, OD_Id, OD_ProdId, OD_Quantity, OD_Price "
-	sentencia += " FROM orders"
+	var sentencia string = "SELECT Order_Id, Order_UserUUID, Order_AddId, Order_Date, Order_Total FROM orders"
 
 	var where string
 	var whereUser string = " Order_UserUUID = '" + user + "'"
@@ -179,6 +178,7 @@ func SelectOrders(user string, fechaDesde string, fechaHasta string, page int) (
 		// Leo orders_detail por cada registro en 'orders'
 		var rowsD *sql.Rows
 		sentenciaD := "Select OD_Id, OD_ProdId, OD_Quantity, OD_Price FROM orders_detail WHERE OD_OrderId=" + strconv.Itoa(Order.Order_Id)
+		fmt.Println(sentenciaD)
 		rowsD, err = Db.Query(sentenciaD)
 
 		var OD_Id int64
