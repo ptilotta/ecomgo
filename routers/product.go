@@ -70,10 +70,6 @@ func SelectProduct(body string, request events.APIGatewayV2HTTPRequest) (int, st
 		t.ProdCategId, _ = strconv.Atoi(param["categId"])
 	}
 
-	if len(choice) == 0 {
-		return 400, "Debe especificar el ID del Producto o el parámetro 'search' o el Id de una categoría"
-	}
-
 	result, err2 := bd.SelectProduct(t, choice, page, pageSize, orderType, orderField)
 	if err2 != nil {
 		return 400, "Ocurrió un error al intentar capturar los resultados de la búsqueda de tipo '" + choice + "' en productos > " + err.Error()
