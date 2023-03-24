@@ -97,7 +97,7 @@ func SelectProduct(p models.Product, choice string, page int, pageSize int, orde
 
 	/* Armo SELECT para el registro */
 	var where, limit string
-	var sentencia string = "SELECT Prod_Title, Prod_Description, Prod_CreatedAt, Prod_Updated, Prod_Price, Prod_Status, Prod_Path, Prod_CategoryId, Prod_Stock FROM products "
+	var sentencia string = "SELECT Prod_Id, Prod_Title, Prod_Description, Prod_CreatedAt, Prod_Updated, Prod_Price, Prod_Status, Prod_Path, Prod_CategoryId, Prod_Stock FROM products "
 	var sentenciaCount string = "SELECT count(*) as registros FROM products "
 
 	switch choice {
@@ -168,6 +168,7 @@ func SelectProduct(p models.Product, choice string, page int, pageSize int, orde
 
 	for rows.Next() {
 		var p models.Product
+		var prodId sql.NullInt32
 		var prodTitle sql.NullString
 		var prodDescription sql.NullString
 		var prodCreatedAt sql.NullTime
@@ -178,12 +179,13 @@ func SelectProduct(p models.Product, choice string, page int, pageSize int, orde
 		var prodCategoryId sql.NullInt32
 		var prodStock sql.NullInt32
 
-		err := rows.Scan(&prodTitle, &prodDescription, &prodCreatedAt, &prodUpdated, &prodPrice, &prodStatus, &prodPath, &prodCategoryId, &prodStock)
+		err := rows.Scan(&prodId, &prodTitle, &prodDescription, &prodCreatedAt, &prodUpdated, &prodPrice, &prodStatus, &prodPath, &prodCategoryId, &prodStock)
 
 		if err != nil {
 			return Resp, err
 		}
 
+		p.ProdID = int(prodId.Int32)
 		p.ProdTitle = prodTitle.String
 		p.ProdDescription = prodDescription.String
 		p.ProdCreatedAt = prodCreatedAt.Time.String()
