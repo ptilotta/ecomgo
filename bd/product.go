@@ -160,7 +160,7 @@ func SelectProduct(p models.Product, choice string, page int, pageSize int, orde
 		}
 	}
 
-	sentencia += where + limit + orderBy
+	sentencia += where + orderBy + limit
 
 	fmt.Println(sentencia)
 
