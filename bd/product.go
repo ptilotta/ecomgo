@@ -109,7 +109,6 @@ func SelectProduct(p models.Product, choice string, page int, pageSize int, orde
 		where = " WHERE Prod_CategoryId = " + strconv.Itoa(p.ProdCategId)
 	}
 
-	sentencia += where
 	sentenciaCount += where
 
 	var rows *sql.Rows
@@ -161,9 +160,6 @@ func SelectProduct(p models.Product, choice string, page int, pageSize int, orde
 	}
 
 	sentencia += where + limit + orderBy
-
-	fmt.Println(sentenciaCount)
-	fmt.Println(sentencia)
 
 	rows, err = Db.Query(sentencia)
 
