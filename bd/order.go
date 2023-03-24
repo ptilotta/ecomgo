@@ -126,7 +126,7 @@ func SelectOrders(user string, fechaDesde string, fechaHasta string, page int) (
 	isAdmin, _ := UserIsAdmin(user)
 
 	var sentencia string = "SELECT Order_Id, Order_UserUUID, Order_AddId, Order_Date, Order_Total, OD_Id, OD_ProdId, OD_Quantity, OD_Price "
-	sentencia += " FROM orders o JOIN orders_detail od ON o.Order_Id = od.OD_OrderId "
+	sentencia += " FROM orders"
 
 	var where string
 	var whereUser string = " Order_UserUUID = '" + user + "'"
@@ -168,10 +168,6 @@ func SelectOrders(user string, fechaDesde string, fechaHasta string, page int) (
 		var Order models.Orders
 		var OrderDate sql.NullTime
 		var OrderAddId sql.NullInt32
-		var OD_Id int64
-		var OD_ProdId int64
-		var OD_Quantity int64
-		var OD_Price float64
 		err := rows.Scan(&Order.Order_Id, &Order.Order_UserUUID, &OrderAddId, &OrderDate, &Order.Order_Total, &OD_Id, &OD_ProdId, &OD_Quantity, &OD_Price)
 		Order.Order_Date = OrderDate.Time.String()
 		Order.Order_AddId = int(OrderAddId.Int32)
@@ -179,6 +175,18 @@ func SelectOrders(user string, fechaDesde string, fechaHasta string, page int) (
 		if err != nil {
 			return Orders, err
 		}
+
+		// Leo orders_detail por cada registro en 'orders'
+		var rowsD *sql.Rows
+		sentenciaD := "Select OD_Id, OD_ProdId, OD_Quantity, OD_Price FROM orders_detail WHERE OD_OrderId=" + strconv.Itoa(Order.Order_Id)
+		rowsD, err = Db.Query(sentenciaD)
+
+		var OD_Id int64
+		var OD_ProdId int64
+		var OD_Quantity int64
+		var OD_Price float64
+
+		err = rowsD.Scan(&OD_Id, &OD_ProdId, &OD_Quantity, &OD_Price)
 
 		var od models.OrdersDetails
 		od.OD_Id = int(OD_Id)
@@ -188,6 +196,7 @@ func SelectOrders(user string, fechaDesde string, fechaHasta string, page int) (
 
 		Order.OrderDetails = append(Order.OrderDetails, od)
 		Orders = append(Orders, Order)
+		rowsD.Close()
 	}
 
 	fmt.Println("Select Orders > Ejecución exitosa ")
