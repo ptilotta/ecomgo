@@ -63,13 +63,12 @@ func SelectUser(body string, User string) (int, string) {
 
 /*SelectUsers es la funcion para obtener la lista de los usuarios en la base */
 func SelectUsers(body string, User string, request events.APIGatewayV2HTTPRequest) (int, string) {
-	var t models.ListUsers
-
 	// Proceso los parámetros recibidos
+	var Page int
 	if len(request.QueryStringParameters["page"]) == 0 {
-		t.Page = 1
+		Page = 1
 	} else {
-		t.Page, _ = strconv.Atoi(request.QueryStringParameters["page"])
+		Page, _ = strconv.Atoi(request.QueryStringParameters["page"])
 	}
 
 	// Chequeamos que sea Admin quien hace la petición
@@ -78,7 +77,7 @@ func SelectUsers(body string, User string, request events.APIGatewayV2HTTPReques
 		return 400, msg
 	}
 
-	user, err := bd.SelectUsers(t)
+	user, err := bd.SelectUsers(Page)
 	if err != nil {
 		return 400, "Ocurrió un error al intentar obtener la lista de usuarios > " + err.Error()
 	}

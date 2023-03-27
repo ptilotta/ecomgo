@@ -87,7 +87,7 @@ func SelectUser(UserID string) (models.User, error) {
 }
 
 // SelectUser Selecciona los datos de un usuario en particular
-func SelectUsers(UFields models.ListUsers) ([]models.User, error) {
+func SelectUsers(Page int) ([]models.User, error) {
 	fmt.Println("Comienza SelectUser")
 	User := []models.User{}
 
@@ -98,7 +98,7 @@ func SelectUsers(UFields models.ListUsers) ([]models.User, error) {
 	defer Db.Close()
 
 	/* Armo SELECT */
-	var offset int = (UFields.Page * 10) - 10
+	var offset int = (Page * 10) - 10
 	var sentencia string
 
 	if offset > 0 {

@@ -20,11 +20,6 @@ type User struct {
 	UserDateUpg   string `json:"userDateUpg"`
 }
 
-type ListUsers struct {
-	UserUUID_Admin string `json:"userUUID_Admin"`
-	Page           int    `json:"page"`
-}
-
 type DeleteUser struct {
 	UserUUID string `json:"userUUID"`
 }
