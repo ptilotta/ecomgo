@@ -24,8 +24,11 @@ func Manejadores(path string, method string, body string, headers map[string]str
 	case "/default/ecommerce/user/me":
 		return UserCRUD(body, path, method, User, request)
 	case "/default/ecommerce/users":
-		if method == "GET" {
+		switch method {
+		case "GET":
 			return routers.SelectUsers(body, User, request)
+		case "DELETE":
+			return routers.DeleteUser(body, User)
 		}
 	case "/default/ecommerce/product":
 		return ProductCRUD(body, path, method, User, request)
@@ -93,8 +96,6 @@ func UserCRUD(body string, path string, method string, user string, request even
 		return routers.UpdateUser(body, user)
 	case "GET":
 		return routers.SelectUser(body, user)
-	case "DELETE":
-		return routers.DeleteUser(body, user)
 	}
 	return 400, "Method Invalid"
 }

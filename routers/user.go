@@ -105,6 +105,12 @@ func DeleteUser(body string, User string) (int, string) {
 		return 400, "No existe un usuario registrado con ese UUID"
 	}
 
+	// Chequeamos que sea Admin quien hace la petición
+	isAdmin, msg := bd.UserIsAdmin(User)
+	if !isAdmin {
+		return 400, msg
+	}
+
 	err = bd.DeleteUser(t)
 	if err != nil {
 		return 400, "Ocurrió un error al intentar borrar el usuario > " + err.Error()
