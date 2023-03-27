@@ -24,6 +24,11 @@ type DeleteUser struct {
 	UserUUID string `json:"userUUID"`
 }
 
+type ListUsers struct {
+	CantUsers int `json:"cantUsers"`
+	Lista     []User
+}
+
 type Product struct {
 	ProdID          int     `json:"prodID"`
 	ProdTitle       string  `json:"prodTitle"`

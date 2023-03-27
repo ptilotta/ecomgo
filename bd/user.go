@@ -87,19 +87,21 @@ func SelectUser(UserID string) (models.User, error) {
 }
 
 // SelectUser Selecciona los datos de un usuario en particular
-func SelectUsers(Page int) ([]models.User, error) {
+func SelectUsers(Page int) (models.ListUsers, error) {
 	fmt.Println("Comienza SelectUser")
+	var lu models.ListUsers
 	User := []models.User{}
 
 	err := DbConnnect()
 	if err != nil {
-		return User, err
+		return lu, err
 	}
 	defer Db.Close()
 
 	/* Armo SELECT */
 	var offset int = (Page * 10) - 10
 	var sentencia string
+	var sentenciaCount string = "SELECT count(*) as registros FROM users"
 
 	if offset > 0 {
 		sentencia = "Select * FROM users LIMIT 10 OFFSET " + strconv.Itoa(offset)
@@ -107,14 +109,28 @@ func SelectUsers(Page int) ([]models.User, error) {
 		sentencia = "Select * FROM users LIMIT 10 OFFSET " + strconv.Itoa(offset)
 	}
 
+	// Obtengo la cantidad de usuarios de la base
+	var rowsCount *sql.Rows
+	rowsCount, err = Db.Query(sentenciaCount)
+	defer rowsCount.Close()
+	if err != nil {
+		return lu, err
+	}
+	rowsCount.Next()
+
+	var registros int
+	rowsCount.Scan(&registros)
+	lu.CantUsers = registros
+	// Fin cantidad de usuarios
+
 	var rows *sql.Rows
 	rows, err = Db.Query(sentencia)
 	defer rows.Close()
-
 	if err != nil {
 		fmt.Println(err.Error())
-		return User, err
+		return lu, err
 	}
+
 	for rows.Next() {
 		var u models.User
 		var firstName sql.NullString
@@ -123,7 +139,7 @@ func SelectUsers(Page int) ([]models.User, error) {
 
 		err := rows.Scan(&u.UserUUID, &u.UserEmail, &firstName, &lastName, &u.UserStatus, &u.UserDateAdd, &dateUpg)
 		if err != nil {
-			return User, err
+			return lu, err
 		}
 		u.UserFirstName = firstName.String
 		u.UserLastName = lastName.String
@@ -132,7 +148,8 @@ func SelectUsers(Page int) ([]models.User, error) {
 	}
 
 	fmt.Println("Select User > Ejecución exitosa ")
-	return User, nil
+	lu.Lista = User
+	return lu, nil
 }
 
 // DeleteUser borra el registro del usuario
