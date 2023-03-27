@@ -57,7 +57,7 @@ func validoAuthorization(path string, method string, headers map[string]string) 
 	if path == "/default/ecommerce/user/me" ||
 		path == "/default/ecommerce/users" ||
 		path == "/default/ecommerce/stock" ||
-		path == "/default/ecommerce/category" ||
+		(path == "/default/ecommerce/category" && method != "GET") ||
 		path == "/default/ecommerce/order" ||
 		path == "/default/ecommerce/orders" ||
 		path == "/default/ecommerce/address" ||
