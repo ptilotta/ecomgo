@@ -74,41 +74,7 @@ func UpdateCategory(c models.Category) error {
 	return nil
 }
 
-func SelectCategory(c models.Category) (models.Category, error) {
-	fmt.Println("Comienza SelectCategory")
-	var Categ models.Category
-	err := DbConnnect()
-	if err != nil {
-		return Categ, err
-	}
-	defer Db.Close()
-
-	/* Armo SELECT para el registro */
-	sentencia := "SELECT Categ_Name, Categ_Path FROM category WHERE Categ_Id = " + strconv.Itoa(c.CategID)
-
-	var rows *sql.Rows
-	rows, err = Db.Query(sentencia)
-	defer rows.Close()
-
-	if err != nil {
-		fmt.Println(err.Error())
-		return Categ, err
-	}
-
-	rows.Next()
-
-	var categName sql.NullString
-	var categPath sql.NullString
-	rows.Scan(&categName, &categPath)
-
-	Categ.CategName = categName.String
-	Categ.CategPath = categPath.String
-
-	fmt.Println("Select Category > Ejecución exitosa ")
-	return Categ, err
-}
-
-func SelectCategories() ([]models.Category, error) {
+func SelectCategories(CategId int) ([]models.Category, error) {
 	fmt.Println("Comienza SelectCategories")
 	var Categ []models.Category
 	err := DbConnnect()
@@ -119,6 +85,9 @@ func SelectCategories() ([]models.Category, error) {
 
 	/* Armo SELECT para el registro */
 	sentencia := "SELECT Categ_Id, Categ_Name, Categ_Path FROM category "
+	if CategId > 0 {
+		sentencia += "WHERE Categ_Id=" + strconv.Itoa(CategId)
+	}
 
 	var rows *sql.Rows
 	rows, err = Db.Query(sentencia)

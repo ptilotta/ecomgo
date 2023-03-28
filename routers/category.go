@@ -68,40 +68,25 @@ func UpdateCategory(body string, User string) (int, string) {
 }
 
 /*SelectCategory es la funcion para leer el registro de categoría */
-func SelectCategory(body string, request events.APIGatewayV2HTTPRequest) (int, string) {
-	var t models.Category
+func SelectCategories(body string, request events.APIGatewayV2HTTPRequest) (int, string) {
 	var err error
+	var CategId int
 
 	// Proceso los parámetros recibidos
-	if len(request.QueryStringParameters["categId"]) == 0 {
-		return 400, "Debe especificar el ID de la Categoría"
-	} else {
-		t.CategID, err = strconv.Atoi(request.QueryStringParameters["categId"])
+	if len(request.QueryStringParameters["categId"]) > 0 {
+		CategId, err = strconv.Atoi(request.QueryStringParameters["categId"])
+		if err != nil {
+			return 500, "Ocurrió un error al intentar convertir en entero al valor " + request.QueryStringParameters["categId"]
+		}
 	}
 
-	result, err2 := bd.SelectCategory(t)
+	lista, err2 := bd.SelectCategories(CategId)
 	if err2 != nil {
-		return 400, "Ocurrió un error al intentar capturar el registro de la categoría " + strconv.Itoa(t.CategID) + " > " + err.Error()
+		return 400, "Ocurrió un error al intentar capturar categoría/s > " + err2.Error()
 	}
 
-	Categ, err3 := json.Marshal(result)
-	if err3 != nil {
-		return 400, "Ocurrió un error al intentar convertir en JSON el registro de Categoría"
-	}
+	Categ, err3 := json.Marshal(lista)
 
-	return 200, string(Categ)
-}
-
-/*SelectCategory es la funcion para leer el registro de categoría */
-func SelectCategories() (int, string) {
-	var err error
-
-	result, err2 := bd.SelectCategories()
-	if err2 != nil {
-		return 400, "Ocurrió un error al intentar capturar los registros de las categorías > " + err.Error()
-	}
-
-	Categ, err3 := json.Marshal(result)
 	if err3 != nil {
 		return 400, "Ocurrió un error al intentar convertir en JSON los registros de Categorías"
 	}

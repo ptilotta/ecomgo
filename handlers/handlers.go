@@ -38,10 +38,8 @@ func Manejadores(path string, method string, body string, headers map[string]str
 		}
 	case "/default/ecommerce/address":
 		return AddressCRUD(body, path, method, User, request)
-	case "/default/ecommerce/category":
-		return CategoryCRUD(body, path, method, User, request)
 	case "/default/ecommerce/categories":
-		return routers.SelectCategories()
+		return CategoryCRUD(body, path, method, User, request)
 	case "/default/ecommerce/order":
 		return OrderCRUD(body, path, method, User, request)
 	case "/default/ecommerce/orders":
@@ -57,7 +55,7 @@ func validoAuthorization(path string, method string, headers map[string]string) 
 	if path == "/default/ecommerce/user/me" ||
 		path == "/default/ecommerce/users" ||
 		path == "/default/ecommerce/stock" ||
-		(path == "/default/ecommerce/category" && method != "GET") ||
+		(path == "/default/ecommerce/categories" && method != "GET") ||
 		path == "/default/ecommerce/order" ||
 		path == "/default/ecommerce/orders" ||
 		path == "/default/ecommerce/address" ||
@@ -138,7 +136,7 @@ func CategoryCRUD(body string, path string, method string, user string, request 
 	case "PUT":
 		return routers.UpdateCategory(body, user)
 	case "GET":
-		return routers.SelectCategory(body, request)
+		return routers.SelectCategories(body, request)
 	}
 	return 400, "Method Invalid"
 }
