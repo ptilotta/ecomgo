@@ -26,6 +26,7 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 	body := request.Body
 	headers := request.Headers
 
+	println("Pasé por aca")
 	bd.ReadSecret()
 
 	status, message := handlers.Manejadores(path, method, body, headers, request)
