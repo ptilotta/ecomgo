@@ -74,6 +74,28 @@ func UpdateCategory(c models.Category) error {
 	return nil
 }
 
+func DeleteCategory(c models.Category) error {
+	fmt.Println("Comienza Delete")
+
+	err := DbConnnect()
+	if err != nil {
+		return err
+	}
+	defer Db.Close()
+
+	/* Armo UPDATE para el registro */
+	sentencia := "DELETE FROM category WHERE Categ_Id=" + strconv.Itoa(c.CategID)
+
+	_, err = Db.Exec(sentencia)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+
+	fmt.Println("Delete Category > Ejecución exitosa ")
+	return nil
+}
+
 func SelectCategories(CategId int) ([]models.Category, error) {
 	fmt.Println("Comienza SelectCategories")
 	var Categ []models.Category

@@ -67,6 +67,33 @@ func UpdateCategory(body string, User string) (int, string) {
 	return 200, "Update OK"
 }
 
+/*DeleteCategory es la funcion para borrar en la BD el registro de categoría */
+func DeleteCategory(body string, User string) (int, string) {
+	var t models.Category
+	err := json.Unmarshal([]byte(body), &t)
+
+	if err != nil {
+		return 400, "Error en los datos recibidos " + err.Error()
+	}
+
+	if t.CategID == 0 {
+		return 400, "Debe especificar ID de la Categoría a borrar"
+	}
+
+	// Chequeamos que sea Admin quien hace la petición
+	isAdmin, msg := bd.UserIsAdmin(User)
+	if !isAdmin {
+		return 400, msg
+	}
+
+	err2 := bd.DeleteCategory(t)
+	if err2 != nil {
+		return 400, "Ocurrió un error al intentar realizar el DELETE de la categoria " + strconv.Itoa(t.CategID) + " > " + err.Error()
+	}
+
+	return 200, "Delete OK"
+}
+
 /*SelectCategory es la funcion para leer el registro de categoría */
 func SelectCategories(body string, request events.APIGatewayV2HTTPRequest) (int, string) {
 	var err error

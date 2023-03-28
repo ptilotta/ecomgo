@@ -135,6 +135,8 @@ func CategoryCRUD(body string, path string, method string, user string, request 
 		return routers.InsertCategory(body, user)
 	case "PUT":
 		return routers.UpdateCategory(body, user)
+	case "DELETE":
+		return routers.DeleteCategory(body, user)
 	case "GET":
 		return routers.SelectCategories(body, request)
 	}
