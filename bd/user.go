@@ -120,7 +120,7 @@ func SelectUsers(Page int) (models.ListUsers, error) {
 
 	var registros int
 	rowsCount.Scan(&registros)
-	lu.CantUsers = registros
+	lu.TotalItems = registros
 	// Fin cantidad de usuarios
 
 	var rows *sql.Rows
@@ -148,7 +148,7 @@ func SelectUsers(Page int) (models.ListUsers, error) {
 	}
 
 	fmt.Println("Select User > Ejecución exitosa ")
-	lu.Lista = User
+	lu.Data = User
 	return lu, nil
 }
 

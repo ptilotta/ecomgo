@@ -25,8 +25,8 @@ type DeleteUser struct {
 }
 
 type ListUsers struct {
-	CantUsers int `json:"cantUsers"`
-	Lista     []User
+	TotalItems int    `json:"totalItems"`
+	Data       []User `json:"data"`
 }
 
 type Product struct {
@@ -44,8 +44,8 @@ type Product struct {
 }
 
 type ProductResp struct {
-	CantRows int `json:"cantRows"`
-	Rows     []Product
+	TotalItems int       `json:"totalItems"`
+	Data       []Product `json:"data"`
 }
 
 type Category struct {

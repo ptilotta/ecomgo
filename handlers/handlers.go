@@ -28,7 +28,7 @@ func Manejadores(path string, method string, body string, headers map[string]str
 		case "GET":
 			return routers.SelectUsers(body, User, request)
 		case "DELETE":
-			return routers.DeleteUser(body, User)
+			return routers.DeleteUser(User, request)
 		}
 	case "/default/ecommerce/product":
 		return ProductCRUD(body, path, method, User, request)

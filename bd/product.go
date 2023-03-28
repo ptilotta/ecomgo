@@ -198,8 +198,8 @@ func SelectProduct(p models.Product, choice string, page int, pageSize int, orde
 		Prod = append(Prod, p)
 	}
 
-	Resp.CantRows = registros
-	Resp.Rows = Prod
+	Resp.TotalItems = registros
+	Resp.Data = Prod
 
 	fmt.Println("Select Product > Ejecución exitosa ")
 	return Resp, err
