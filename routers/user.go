@@ -92,6 +92,8 @@ func SelectUsers(body string, User string, request events.APIGatewayV2HTTPReques
 
 /*DeleteUser es la funcion para borrar un usuario de la base */
 func DeleteUser(User string, request events.APIGatewayV2HTTPRequest) (int, string) {
+
+	fmt.Println("Pasé por aca MuTonto !!")
 	param := request.PathParameters
 	fmt.Printf("Path parameters: %v\n", param)
 
