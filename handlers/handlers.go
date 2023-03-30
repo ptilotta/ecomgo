@@ -18,6 +18,11 @@ func Manejadores(path string, method string, body string, headers map[string]str
 		return statusCode, message
 	}
 
+	fmt.Println("Pasé por aca MuTonto !!")
+	param := request.PathParameters
+	fmt.Printf("Path parameters: %v\n", param)
+	fmt.Println("y el path es ", path)
+
 	User = message
 
 	switch path {
