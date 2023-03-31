@@ -74,7 +74,7 @@ func UpdateCategory(c models.Category) error {
 	return nil
 }
 
-func DeleteCategory(c models.Category) error {
+func DeleteCategory(id int) error {
 	fmt.Println("Comienza Delete")
 
 	err := DbConnnect()
@@ -84,7 +84,7 @@ func DeleteCategory(c models.Category) error {
 	defer Db.Close()
 
 	/* Armo UPDATE para el registro */
-	sentencia := "DELETE FROM category WHERE Categ_Id=" + strconv.Itoa(c.CategID)
+	sentencia := "DELETE FROM category WHERE Categ_Id=" + strconv.Itoa(id)
 
 	_, err = Db.Exec(sentencia)
 	if err != nil {

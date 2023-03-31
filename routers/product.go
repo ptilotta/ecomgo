@@ -84,7 +84,7 @@ func SelectProduct(body string, request events.APIGatewayV2HTTPRequest) (int, st
 }
 
 /*UpdateProduct es la funcion para modificar en la BD el registro de producto */
-func UpdateProduct(body string, User string) (int, string) {
+func UpdateProduct(body string, User string, id int) (int, string) {
 	var t models.Product
 	err := json.Unmarshal([]byte(body), &t)
 
@@ -98,6 +98,7 @@ func UpdateProduct(body string, User string) (int, string) {
 		return 400, msg
 	}
 
+	t.ProdID = id
 	err2 := bd.UpdateProduct(t)
 	if err2 != nil {
 		return 400, "Ocurrió un error al intentar realizar el UPDATE del producto " + strconv.Itoa(t.ProdID) + " > " + err.Error()
@@ -107,13 +108,7 @@ func UpdateProduct(body string, User string) (int, string) {
 }
 
 /*DeleteProduct es la funcion para borrar en la BD el registro de producto */
-func DeleteProduct(body string, User string) (int, string) {
-	var t models.Product
-	err := json.Unmarshal([]byte(body), &t)
-
-	if err != nil {
-		return 400, "Error en los datos recibidos " + err.Error()
-	}
+func DeleteProduct(User string, id int) (int, string) {
 
 	// Chequeamos que sea Admin quien hace la petición
 	isAdmin, msg := bd.UserIsAdmin(User)
@@ -121,16 +116,16 @@ func DeleteProduct(body string, User string) (int, string) {
 		return 400, msg
 	}
 
-	err2 := bd.DeleteProduct(t)
+	err2 := bd.DeleteProduct(id)
 	if err2 != nil {
-		return 400, "Ocurrió un error al intentar realizar el Delete del producto " + strconv.Itoa(t.ProdID) + " > " + err.Error()
+		return 400, "Ocurrió un error al intentar realizar el Delete del producto " + strconv.Itoa(id) + " > " + err2.Error()
 	}
 
 	return 200, "Delete OK"
 }
 
 /*UpdateStock es la funcion para actualizar el Stock de un producto */
-func UpdateStock(body string, User string) (int, string) {
+func UpdateStock(body string, User string, id int) (int, string) {
 	var t models.Product
 	err := json.Unmarshal([]byte(body), &t)
 
@@ -144,6 +139,7 @@ func UpdateStock(body string, User string) (int, string) {
 		return 400, msg
 	}
 
+	t.ProdID = id
 	err2 := bd.UpdateStock(t)
 	if err2 != nil {
 		return 400, "Ocurrió un error al intentar realizar el Update del Stock del producto " + strconv.Itoa(t.ProdID) + " > " + err.Error()

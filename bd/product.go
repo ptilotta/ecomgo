@@ -268,7 +268,7 @@ func UpdateProduct(p models.Product) error {
 	return nil
 }
 
-func DeleteProduct(p models.Product) error {
+func DeleteProduct(id int) error {
 	fmt.Println("Comienza Delete")
 
 	err := DbConnnect()
@@ -278,7 +278,7 @@ func DeleteProduct(p models.Product) error {
 	defer Db.Close()
 
 	/* Armo DELETE para el registro */
-	sentencia := "DELETE FROM products WHERE Prod_Id = " + strconv.Itoa(p.ProdID)
+	sentencia := "DELETE FROM products WHERE Prod_Id = " + strconv.Itoa(id)
 
 	_, err = Db.Exec(sentencia)
 	if err != nil {

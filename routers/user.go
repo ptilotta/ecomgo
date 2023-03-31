@@ -91,13 +91,9 @@ func SelectUsers(body string, User string, request events.APIGatewayV2HTTPReques
 }
 
 /*DeleteUser es la funcion para borrar un usuario de la base */
-func DeleteUser(User string, request events.APIGatewayV2HTTPRequest) (int, string) {
+func DeleteUser(User string, id string) (int, string) {
 
-	fmt.Println("Pasé por aca MuTonto !!")
-	param := request.PathParameters
-	fmt.Printf("Path parameters: %v\n", param)
-
-	_, encontrado := bd.UserExists(User)
+	_, encontrado := bd.UserExists(id)
 	if encontrado == false {
 		return 400, "No existe un usuario registrado con ese UUID"
 	}
@@ -108,10 +104,10 @@ func DeleteUser(User string, request events.APIGatewayV2HTTPRequest) (int, strin
 		return 400, msg
 	}
 
-	/*	err = bd.DeleteUser(t)
-		if err != nil {
-			return 400, "Ocurrió un error al intentar borrar el usuario > " + err.Error()
-		}
-	*/
+	err := bd.DeleteUser(id)
+	if err != nil {
+		return 400, "Ocurrió un error al intentar borrar el usuario > " + err.Error()
+	}
+
 	return 200, "Delete OK!"
 }

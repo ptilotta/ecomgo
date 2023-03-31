@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/ptilotta/ecomgo/auth"
@@ -12,59 +13,45 @@ import (
 func Manejadores(path string, method string, body string, headers map[string]string, request events.APIGatewayV2HTTPRequest) (int, string) {
 
 	var User string
+	fmt.Println("Voy a procesar " + path + " > " + method)
+	param := request.PathParameters
+	id := param["id"]
+	idn, _ := strconv.Atoi(id)
 
-	isOk, statusCode, message := validoAuthorization(path, method, headers)
+	isOk, statusCode, message := validoAuthorization(path, method, id, idn, headers)
 	if !isOk {
 		return statusCode, message
 	}
 
-	fmt.Println("Pasé por aca MuTonto !!")
-	param := request.PathParameters
-	fmt.Printf("Path parameters: %v\n", param)
-	fmt.Println("y el path es ", path)
-
 	User = message
 
-	switch path {
-	case "/default/ecommerce/user/me":
-		return UserCRUD(body, path, method, User, request)
-	case "/default/ecommerce/users":
-		switch method {
-		case "GET":
-			return routers.SelectUsers(body, User, request)
-		case "DELETE":
-			return routers.DeleteUser(User, request)
-		}
-	case "/default/ecommerce/product":
-		return ProductCRUD(body, path, method, User, request)
-	case "/default/ecommerce/stock":
-		if method == "PUT" {
-			return routers.UpdateStock(body, User)
-		}
-	case "/default/ecommerce/address":
-		return AddressCRUD(body, path, method, User, request)
-	case "/default/ecommerce/categories":
-		return CategoryCRUD(body, path, method, User, request)
-	case "/default/ecommerce/order":
-		return OrderCRUD(body, path, method, User, request)
-	case "/default/ecommerce/orders":
-		if method == "GET" {
-			return routers.SelectOrders(User, request)
-		}
+	switch path[0:4] {
+	case "user":
+		return ProcesoUsers(body, path, method, User, id, request)
+	case "prod":
+		return ProcesoProduct(body, path, method, User, idn, request)
+	case "stoc":
+		return ProcesoStock(body, path, method, User, idn, request)
+	case "addr":
+		return ProcesoAddress(body, path, method, User, idn, request)
+	case "cate":
+		return ProcesoCategory(body, path, method, User, idn, request)
+	case "orde":
+		return ProcesoOrder(body, path, method, User, request)
 	}
 
-	return 200, "Todo OK"
+	return 400, "Method Invalid"
 }
 
-func validoAuthorization(path string, method string, headers map[string]string) (bool, int, string) {
-	if path == "/default/ecommerce/user/me" ||
-		path == "/default/ecommerce/users" ||
-		path == "/default/ecommerce/stock" ||
-		(path == "/default/ecommerce/categories" && method != "GET") ||
-		path == "/default/ecommerce/order" ||
-		path == "/default/ecommerce/orders" ||
-		path == "/default/ecommerce/address" ||
-		(path == "/default/ecommerce/product" && method != "GET") {
+func validoAuthorization(path string, method string, id string, idn int, headers map[string]string) (bool, int, string) {
+	if path == "user/me" || path == "users" || (path == "users/"+id && method == "DELETE") ||
+		path == "order" || path == "orders" ||
+		path == "address" ||
+		(path == "product" && method != "GET") ||
+		(path == "product/"+strconv.Itoa(idn) && (method == "PUT" || method == "DELETE")) ||
+		path == "stock" ||
+		(path == "categories" && method != "GET") || (path == "category" && method != "GET") ||
+		(path == "category/"+strconv.Itoa(idn) && (method == "PUT" || method == "DELETE")) {
 
 		fmt.Println(headers)
 		token := headers["authorization"]
@@ -92,64 +79,86 @@ func validoAuthorization(path string, method string, headers map[string]string) 
 	return true, 200, ""
 }
 
-func UserCRUD(body string, path string, method string, user string, request events.APIGatewayV2HTTPRequest) (int, string) {
-	fmt.Println("Voy a procesar " + path + " > " + method + " para el user " + user)
-	switch method {
-	case "PUT":
-		return routers.UpdateUser(body, user)
-	case "GET":
-		return routers.SelectUser(body, user)
+func ProcesoUsers(body string, path string, method string, user string, id string, request events.APIGatewayV2HTTPRequest) (int, string) {
+
+	if path == "user/me" {
+		switch method {
+		case "PUT":
+			return routers.UpdateUser(body, user)
+		case "GET":
+			return routers.SelectUser(body, user)
+		}
+	}
+	if path == "users" {
+		if method == "GET" {
+			return routers.SelectUsers(body, user, request)
+		}
+	}
+	if path == "users/"+id && method == "DELETE" {
+		return routers.DeleteUser(user, id)
 	}
 	return 400, "Method Invalid"
 }
 
-func ProductCRUD(body string, path string, method string, user string, request events.APIGatewayV2HTTPRequest) (int, string) {
-	fmt.Println("Voy a procesar " + path + " > " + method)
+func ProcesoProduct(body string, path string, method string, user string, id int, request events.APIGatewayV2HTTPRequest) (int, string) {
+
 	switch method {
 	case "POST":
 		return routers.InsertProduct(body, user)
 	case "GET":
 		return routers.SelectProduct(body, request)
 	case "PUT":
-		return routers.UpdateProduct(body, user)
+		return routers.UpdateProduct(body, user, id)
 	case "DELETE":
-		return routers.DeleteProduct(body, user)
+		return routers.DeleteProduct(user, id)
 	}
 	return 400, "Method Invalid"
 }
 
-func AddressCRUD(body string, path string, method string, user string, request events.APIGatewayV2HTTPRequest) (int, string) {
-	fmt.Println("Voy a procesar " + path + " > " + method)
+func ProcesoStock(body string, path string, method string, user string, id int, request events.APIGatewayV2HTTPRequest) (int, string) {
+
+	if method == "PUT" {
+		return routers.UpdateProduct(body, user, id)
+	}
+	return 400, "Method Invalid"
+}
+
+func ProcesoAddress(body string, path string, method string, user string, id int, request events.APIGatewayV2HTTPRequest) (int, string) {
+
 	switch method {
 	case "POST":
 		return routers.InsertAddress(body, user)
 	case "GET":
 		return routers.SelectAddresses(user)
 	case "PUT":
-		return routers.UpdateAddress(body, user)
+		return routers.UpdateAddress(body, user, id)
 	case "DELETE":
-		return routers.DeleteAddress(body, user)
+		return routers.DeleteAddress(user, id)
 	}
 	return 400, "Method Invalid"
 }
 
-func CategoryCRUD(body string, path string, method string, user string, request events.APIGatewayV2HTTPRequest) (int, string) {
-	fmt.Println("Voy a procesar " + path + " > " + method)
+func ProcesoCategory(body string, path string, method string, user string, id int, request events.APIGatewayV2HTTPRequest) (int, string) {
+
 	switch method {
 	case "POST":
 		return routers.InsertCategory(body, user)
 	case "PUT":
-		return routers.UpdateCategory(body, user)
+		return routers.UpdateCategory(body, user, id)
 	case "DELETE":
-		return routers.DeleteCategory(body, user)
+		return routers.DeleteCategory(body, user, id)
 	case "GET":
 		return routers.SelectCategories(body, request)
 	}
 	return 400, "Method Invalid"
 }
 
-func OrderCRUD(body string, path string, method string, user string, request events.APIGatewayV2HTTPRequest) (int, string) {
-	fmt.Println("Voy a procesar " + path + " > " + method)
+func ProcesoOrder(body string, path string, method string, user string, request events.APIGatewayV2HTTPRequest) (int, string) {
+
+	if path == "orders" && method == "GET" {
+		return routers.SelectOrders(user, request)
+	}
+
 	switch method {
 	case "POST":
 		return routers.InsertOrder(body, user)

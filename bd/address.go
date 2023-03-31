@@ -134,7 +134,7 @@ func SelectAddreses(User string) ([]models.Address, error) {
 }
 
 // DeleteUser borra el registro del usuario
-func DeleteAddress(addr models.Address) error {
+func DeleteAddress(id int) error {
 	fmt.Println("Comienza DeleteAddress")
 
 	err := DbConnnect()
@@ -144,7 +144,7 @@ func DeleteAddress(addr models.Address) error {
 	defer Db.Close()
 
 	/* Armo DELETE para el registro */
-	sentencia := "DELETE FROM addresses WHERE Add_Id=" + strconv.Itoa(addr.AddId)
+	sentencia := "DELETE FROM addresses WHERE Add_Id=" + strconv.Itoa(id)
 
 	_, err = Db.Exec(sentencia)
 
@@ -157,7 +157,7 @@ func DeleteAddress(addr models.Address) error {
 	return nil
 }
 
-func AddressExists(User string, AddId int) (error, bool) {
+func AddressExists(User string, id int) (error, bool) {
 	fmt.Println("Comienza AddressExists")
 
 	err := DbConnnect()
@@ -167,7 +167,7 @@ func AddressExists(User string, AddId int) (error, bool) {
 	defer Db.Close()
 
 	/* Armo INSERT para el registro */
-	sentencia := "SELECT 1 FROM addresses WHERE Add_Id ='" + strconv.Itoa(AddId) + "' AND Add_UserId='" + User + "'"
+	sentencia := "SELECT 1 FROM addresses WHERE Add_Id ='" + strconv.Itoa(id) + "' AND Add_UserId='" + User + "'"
 	fmt.Println(sentencia)
 	rows, err := Db.Query(sentencia)
 	if err != nil {

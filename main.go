@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"os"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/ptilotta/ecomgo/awsgo"
@@ -17,11 +18,12 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 	awsgo.InicializoAWS()
 
 	if !validoParametros() {
-		panic("Error en los parámetros. debe enviar 'SecretName', 'UserPoolID', 'Region'")
+		panic("Error en los parámetros. debe enviar 'SecretName', 'UserPoolID', 'Region', 'UrlPrefix")
 	}
 
 	var res *events.APIGatewayProxyResponse
-	path := request.RawPath
+	prefix, _ := os.LookupEnv("UrlPrefix")
+	path := strings.Replace(request.RawPath, prefix, "", -1)
 	method := request.RequestContext.HTTP.Method
 	body := request.Body
 	headers := request.Headers
@@ -59,6 +61,10 @@ func validoParametros() bool {
 		return traeParametro
 	}
 	_, traeParametro = os.LookupEnv("Region")
+	if !traeParametro {
+		return traeParametro
+	}
+	_, traeParametro = os.LookupEnv("UrlPrefix")
 	if !traeParametro {
 		return traeParametro
 	}

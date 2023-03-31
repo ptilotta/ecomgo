@@ -153,7 +153,7 @@ func SelectUsers(Page int) (models.ListUsers, error) {
 }
 
 // DeleteUser borra el registro del usuario
-func DeleteUser(UFields models.DeleteUser) error {
+func DeleteUser(id string) error {
 	fmt.Println("Comienza DeleteUser")
 
 	err := DbConnnect()
@@ -163,7 +163,7 @@ func DeleteUser(UFields models.DeleteUser) error {
 	defer Db.Close()
 
 	/* Armo DELETE para el registro */
-	sentencia := "DELETE FROM users WHERE user_UUID='" + UFields.UserUUID + "'"
+	sentencia := "DELETE FROM users WHERE user_UUID='" + id + "'"
 
 	_, err = Db.Exec(sentencia)
 

@@ -37,7 +37,7 @@ func InsertCategory(body string, User string) (int, string) {
 }
 
 /*UpdateCategory es la funcion para modificar en la BD el registro de categoría */
-func UpdateCategory(body string, User string) (int, string) {
+func UpdateCategory(body string, User string, id int) (int, string) {
 	var t models.Category
 	err := json.Unmarshal([]byte(body), &t)
 
@@ -59,6 +59,7 @@ func UpdateCategory(body string, User string) (int, string) {
 		return 400, msg
 	}
 
+	t.CategID = id
 	err2 := bd.UpdateCategory(t)
 	if err2 != nil {
 		return 400, "Ocurrió un error al intentar realizar el UPDATE de la categoria " + strconv.Itoa(t.CategID) + " > " + err.Error()
@@ -68,15 +69,8 @@ func UpdateCategory(body string, User string) (int, string) {
 }
 
 /*DeleteCategory es la funcion para borrar en la BD el registro de categoría */
-func DeleteCategory(body string, User string) (int, string) {
-	var t models.Category
-	err := json.Unmarshal([]byte(body), &t)
-
-	if err != nil {
-		return 400, "Error en los datos recibidos " + err.Error()
-	}
-
-	if t.CategID == 0 {
+func DeleteCategory(body string, User string, id int) (int, string) {
+	if id == 0 {
 		return 400, "Debe especificar ID de la Categoría a borrar"
 	}
 
@@ -86,9 +80,9 @@ func DeleteCategory(body string, User string) (int, string) {
 		return 400, msg
 	}
 
-	err2 := bd.DeleteCategory(t)
-	if err2 != nil {
-		return 400, "Ocurrió un error al intentar realizar el DELETE de la categoria " + strconv.Itoa(t.CategID) + " > " + err.Error()
+	err := bd.DeleteCategory(id)
+	if err != nil {
+		return 400, "Ocurrió un error al intentar realizar el DELETE de la categoria " + strconv.Itoa(id) + " > " + err.Error()
 	}
 
 	return 200, "Delete OK"
