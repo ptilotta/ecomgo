@@ -46,7 +46,7 @@ func Manejadores(path string, method string, body string, headers map[string]str
 func validoAuthorization(path string, method string, id string, idn int, headers map[string]string) (bool, int, string) {
 	if path == "user/me" || path == "users" || (path == "users/"+id && method == "DELETE") ||
 		path == "order" || path == "orders" ||
-		path == "address" ||
+		path == "address" || path == "address/"+strconv.Itoa(idn) && (method == "PUT" || method == "DELETE") ||
 		(path == "product" && method != "GET") ||
 		(path == "product/"+strconv.Itoa(idn) && (method == "PUT" || method == "DELETE")) ||
 		path == "stock/"+strconv.Itoa(idn) ||
