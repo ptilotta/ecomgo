@@ -44,39 +44,29 @@ func Manejadores(path string, method string, body string, headers map[string]str
 }
 
 func validoAuthorization(path string, method string, id string, idn int, headers map[string]string) (bool, int, string) {
-	if path == "user/me" || path == "users" || (path == "users/"+id && method == "DELETE") ||
-		path == "order" || path == "orders" ||
-		path == "address" || path == "address/"+strconv.Itoa(idn) && (method == "PUT" || method == "DELETE") ||
-		(path == "product" && method != "GET") ||
-		(path == "product/"+strconv.Itoa(idn) && (method == "PUT" || method == "DELETE")) ||
-		path == "stock/"+strconv.Itoa(idn) ||
-		(path == "categories" && method != "GET") || (path == "category" && method != "GET") ||
-		(path == "category/"+strconv.Itoa(idn) && (method == "PUT" || method == "DELETE")) {
-
-		fmt.Println(headers)
-		token := headers["authorization"]
-
-		if len(token) == 0 {
-			return false, 401, "Token requerido"
-		}
-
-		todoOK, err2, msg := auth.ValidoToken(token)
-
-		if !todoOK {
-			if err2 != nil {
-				fmt.Println("Error en el token " + err2.Error())
-				return false, 401, err2.Error()
-			} else {
-				fmt.Println("Error en el token " + msg)
-				return false, 401, msg
-			}
-		} else {
-			fmt.Println("Token OK")
-			return true, 200, msg
-		}
+	if (path == "product" && method == "GET") ||
+		(path == "categories" && method == "GET ") {
+		return true, 200, ""
 	}
 
-	return true, 200, ""
+	token := headers["authorization"]
+	if len(token) == 0 {
+		return false, 401, "Token requerido"
+	}
+
+	todoOK, err2, msg := auth.ValidoToken(token)
+	if !todoOK {
+		if err2 != nil {
+			fmt.Println("Error en el token " + err2.Error())
+			return false, 401, err2.Error()
+		} else {
+			fmt.Println("Error en el token " + msg)
+			return false, 401, msg
+		}
+	} else {
+		fmt.Println("Token OK")
+		return true, 200, msg
+	}
 }
 
 func ProcesoUsers(body string, path string, method string, user string, id string, request events.APIGatewayV2HTTPRequest) (int, string) {
