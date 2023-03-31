@@ -118,7 +118,7 @@ func ProcesoProduct(body string, path string, method string, user string, id int
 func ProcesoStock(body string, path string, method string, user string, id int, request events.APIGatewayV2HTTPRequest) (int, string) {
 
 	if method == "PUT" {
-		return routers.UpdateProduct(body, user, id)
+		return routers.UpdateStock(body, user, id)
 	}
 	return 400, "Method Invalid"
 }
