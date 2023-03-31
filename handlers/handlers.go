@@ -49,7 +49,7 @@ func validoAuthorization(path string, method string, id string, idn int, headers
 		path == "address" ||
 		(path == "product" && method != "GET") ||
 		(path == "product/"+strconv.Itoa(idn) && (method == "PUT" || method == "DELETE")) ||
-		path == "stock" ||
+		path == "stock/"+strconv.Itoa(idn) ||
 		(path == "categories" && method != "GET") || (path == "category" && method != "GET") ||
 		(path == "category/"+strconv.Itoa(idn) && (method == "PUT" || method == "DELETE")) {
 
