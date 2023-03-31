@@ -45,10 +45,6 @@ func UpdateCategory(body string, User string, id int) (int, string) {
 		return 400, "Error en los datos recibidos " + err.Error()
 	}
 
-	if t.CategID == 0 {
-		return 400, "Debe especificar ID de la Categoría a actualizar"
-	}
-
 	if len(t.CategName) == 0 && len(t.CategPath) == 0 {
 		return 400, "Debe especificar Categ_Name o Categ_Path para actualizar"
 	}
