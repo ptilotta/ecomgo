@@ -18,7 +18,7 @@ func Manejadores(path string, method string, body string, headers map[string]str
 	id := param["id"]
 	idn, _ := strconv.Atoi(id)
 
-	isOk, statusCode, message := validoAuthorization(path, method, id, idn, headers)
+	isOk, statusCode, message := validoAuthorization(path, method, headers)
 	if !isOk {
 		return statusCode, message
 	}
@@ -43,7 +43,7 @@ func Manejadores(path string, method string, body string, headers map[string]str
 	return 400, "Method Invalid"
 }
 
-func validoAuthorization(path string, method string, id string, idn int, headers map[string]string) (bool, int, string) {
+func validoAuthorization(path string, method string, headers map[string]string) (bool, int, string) {
 	if (path == "product" && method == "GET") ||
 		(path == "categories" && method == "GET ") {
 		return true, 200, ""
