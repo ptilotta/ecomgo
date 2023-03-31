@@ -54,11 +54,11 @@ func validoAuthorization(path string, method string, id string, idn int, headers
 		return false, 401, "Token requerido"
 	}
 
-	todoOK, err2, msg := auth.ValidoToken(token)
+	todoOK, err, msg := auth.ValidoToken(token)
 	if !todoOK {
-		if err2 != nil {
-			fmt.Println("Error en el token " + err2.Error())
-			return false, 401, err2.Error()
+		if err != nil {
+			fmt.Println("Error en el token " + err.Error())
+			return false, 401, err.Error()
 		} else {
 			fmt.Println("Error en el token " + msg)
 			return false, 401, msg
