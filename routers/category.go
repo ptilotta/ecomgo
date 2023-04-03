@@ -12,8 +12,8 @@ import (
 /*InsertProduct es la funcion para crear en la BD el registro de producto */
 func InsertCategory(body string, User string) (int, string) {
 	var t models.Category
-	err := json.Unmarshal([]byte(body), &t)
 
+	err := json.Unmarshal([]byte(body), &t)
 	if err != nil {
 		return 400, "Error en los datos recibidos " + err.Error()
 	}
@@ -39,8 +39,8 @@ func InsertCategory(body string, User string) (int, string) {
 /*UpdateCategory es la funcion para modificar en la BD el registro de categoría */
 func UpdateCategory(body string, User string, id int) (int, string) {
 	var t models.Category
-	err := json.Unmarshal([]byte(body), &t)
 
+	err := json.Unmarshal([]byte(body), &t)
 	if err != nil {
 		return 400, "Error en los datos recibidos " + err.Error()
 	}
@@ -66,6 +66,7 @@ func UpdateCategory(body string, User string, id int) (int, string) {
 
 /*DeleteCategory es la funcion para borrar en la BD el registro de categoría */
 func DeleteCategory(body string, User string, id int) (int, string) {
+
 	if id == 0 {
 		return 400, "Debe especificar ID de la Categoría a borrar"
 	}

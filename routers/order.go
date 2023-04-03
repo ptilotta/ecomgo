@@ -17,9 +17,8 @@ func SelectOrder(body string, request events.APIGatewayV2HTTPRequest) (int, stri
 	// Proceso los parámetros recibidos
 	if len(request.QueryStringParameters["orderId"]) == 0 {
 		return 400, "Debe especificar el ID de la Categoría"
-	} else {
-		o.Order_Id, err = strconv.Atoi(request.QueryStringParameters["orderId"])
 	}
+	o.Order_Id, err = strconv.Atoi(request.QueryStringParameters["orderId"])
 
 	result, err2 := bd.SelectOrder(o)
 	if err2 != nil {

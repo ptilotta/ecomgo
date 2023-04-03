@@ -46,8 +46,8 @@ func InsertAddress(body string, User string) (int, string) {
 /*UpdateAddress es la funcion para actualizar en la BD una Address de Usuario */
 func UpdateAddress(body string, User string, id int) (int, string) {
 	var t models.Address
-	err := json.Unmarshal([]byte(body), &t)
 
+	err := json.Unmarshal([]byte(body), &t)
 	if err != nil {
 		return 400, "Error en los datos recibidos " + err.Error()
 	}
@@ -58,9 +58,8 @@ func UpdateAddress(body string, User string, id int) (int, string) {
 	if !encontrado {
 		if err != nil {
 			return 400, "Error al intentar buscar Address para el usuario " + User + " > " + err.Error()
-		} else {
-			return 400, "No se encuentra un registro de ID de Usuario asociado a esa ID de Address"
 		}
+		return 400, "No se encuentra un registro de ID de Usuario asociado a esa ID de Address"
 	}
 
 	err = bd.UpdateAddress(t)
@@ -93,9 +92,8 @@ func DeleteAddress(User string, id int) (int, string) {
 	if !encontrado {
 		if err != nil {
 			return 400, "Error al intentar buscar Address para el usuario " + User + " > " + err.Error()
-		} else {
-			return 400, "No se encuentra un registro de ID de Usuario asociado a esa ID de Address"
 		}
+		return 400, "No se encuentra un registro de ID de Usuario asociado a esa ID de Address"
 	}
 
 	if encontrado == false {

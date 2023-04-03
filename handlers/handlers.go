@@ -12,32 +12,28 @@ import (
 /*Manejadores seteo mi puerto, el Handler y pongo a escuchar al Servidor */
 func Manejadores(path string, method string, body string, headers map[string]string, request events.APIGatewayV2HTTPRequest) (int, string) {
 
-	var User string
 	fmt.Println("Voy a procesar " + path + " > " + method)
-	param := request.PathParameters
-	id := param["id"]
+	id := request.PathParameters["id"]
 	idn, _ := strconv.Atoi(id)
 
-	isOk, statusCode, message := validoAuthorization(path, method, headers)
+	isOk, statusCode, user := validoAuthorization(path, method, headers)
 	if !isOk {
-		return statusCode, message
+		return statusCode, user
 	}
-
-	User = message
 
 	switch path[0:4] {
 	case "user":
-		return ProcesoUsers(body, path, method, User, id, request)
+		return ProcesoUsers(body, path, method, user, id, request)
 	case "prod":
-		return ProcesoProduct(body, path, method, User, idn, request)
+		return ProcesoProduct(body, path, method, user, idn, request)
 	case "stoc":
-		return ProcesoStock(body, path, method, User, idn, request)
+		return ProcesoStock(body, path, method, user, idn, request)
 	case "addr":
-		return ProcesoAddress(body, path, method, User, idn, request)
+		return ProcesoAddress(body, path, method, user, idn, request)
 	case "cate":
-		return ProcesoCategory(body, path, method, User, idn, request)
+		return ProcesoCategory(body, path, method, user, idn, request)
 	case "orde":
-		return ProcesoOrder(body, path, method, User, request)
+		return ProcesoOrder(body, path, method, user, request)
 	}
 
 	return 400, "Method Invalid"
@@ -45,7 +41,7 @@ func Manejadores(path string, method string, body string, headers map[string]str
 
 func validoAuthorization(path string, method string, headers map[string]string) (bool, int, string) {
 	if (path == "product" && method == "GET") ||
-		(path == "categories" && method == "GET ") {
+		(path == "category" && method == "GET ") {
 		return true, 200, ""
 	}
 
