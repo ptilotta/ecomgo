@@ -97,7 +97,7 @@ func SelectProduct(p models.Product, choice string, page int, pageSize int, orde
 
 	/* Armo SELECT para el registro */
 	var where, limit string
-	var sentencia string = "SELECT Prod_Id, Prod_Title, Prod_Description, Prod_CreatedAt, Prod_Updated, Prod_Price, Prod_Status, Prod_Path, Prod_CategoryId, Prod_Stock FROM products "
+	var sentencia string = "SELECT Prod_Id, Prod_Title, Prod_Description, Prod_CreatedAt, Prod_Updated, Prod_Price, Prod_Path, Prod_CategoryId, Prod_Stock FROM products "
 	var sentenciaCount string = "SELECT count(*) as registros FROM products "
 
 	switch choice {
