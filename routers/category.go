@@ -89,6 +89,7 @@ func DeleteCategory(body string, User string, id int) (int, string) {
 func SelectCategories(body string, request events.APIGatewayV2HTTPRequest) (int, string) {
 	var err error
 	var CategId int
+	var Slug string
 
 	// Proceso los parámetros recibidos
 	if len(request.QueryStringParameters["categId"]) > 0 {
@@ -96,9 +97,13 @@ func SelectCategories(body string, request events.APIGatewayV2HTTPRequest) (int,
 		if err != nil {
 			return 500, "Ocurrió un error al intentar convertir en entero al valor " + request.QueryStringParameters["categId"]
 		}
+	} else {
+		if len(request.QueryStringParameters["slug"]) > 0 {
+			Slug = request.QueryStringParameters["slug"]
+		}
 	}
 
-	lista, err2 := bd.SelectCategories(CategId)
+	lista, err2 := bd.SelectCategories(CategId, Slug)
 	if err2 != nil {
 		return 400, "Ocurrió un error al intentar capturar categoría/s > " + err2.Error()
 	}

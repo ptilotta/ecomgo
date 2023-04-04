@@ -96,7 +96,7 @@ func DeleteCategory(id int) error {
 	return nil
 }
 
-func SelectCategories(CategId int) ([]models.Category, error) {
+func SelectCategories(CategId int, Slug string) ([]models.Category, error) {
 	fmt.Println("Comienza SelectCategories")
 	var Categ []models.Category
 	err := DbConnnect()
@@ -109,6 +109,10 @@ func SelectCategories(CategId int) ([]models.Category, error) {
 	sentencia := "SELECT Categ_Id, Categ_Name, Categ_Path FROM category "
 	if CategId > 0 {
 		sentencia += "WHERE Categ_Id=" + strconv.Itoa(CategId)
+	} else {
+		if len(Slug) > 0 {
+			sentencia += "WHERE Categ_Path LIKE '%" + strconv.Itoa(CategId) + "%'"
+		}
 	}
 
 	var rows *sql.Rows
