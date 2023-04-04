@@ -141,15 +141,11 @@ func ProcesoCategory(body string, path string, method string, user string, id in
 
 func ProcesoOrder(body string, path string, method string, user string, request events.APIGatewayV2HTTPRequest) (int, string) {
 
-	if path == "orders" && method == "GET" {
-		return routers.SelectOrders(user, request)
-	}
-
 	switch method {
 	case "POST":
 		return routers.InsertOrder(body, user)
 	case "GET":
-		return routers.SelectOrder(body, request)
+		return routers.SelectOrders(user, request)
 	}
 	return 400, "Method Invalid"
 }

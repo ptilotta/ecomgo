@@ -9,34 +9,6 @@ import (
 	"github.com/ptilotta/ecomgo/models"
 )
 
-/*SelectOrder es la funcion para leer el registro de orders y order_details */
-func SelectOrder(body string, request events.APIGatewayV2HTTPRequest) (int, string) {
-	var o models.Orders
-	var err error
-
-	// Proceso los parámetros recibidos
-	if len(request.QueryStringParameters["orderId"]) == 0 {
-		return 400, "Debe especificar el ID de la Categoría"
-	}
-	o.Order_Id, err = strconv.Atoi(request.QueryStringParameters["orderId"])
-
-	result, err2 := bd.SelectOrder(o)
-	if err2 != nil {
-		return 400, "Ocurrió un error al intentar capturar el registro de la orden " + strconv.Itoa(o.Order_Id) + " > " + err.Error()
-	}
-
-	if result.Order_Total == 0 {
-		return 400, "Orden " + strconv.Itoa(o.Order_Id) + " no existe "
-	}
-
-	Order, err3 := json.Marshal(result)
-	if err3 != nil {
-		return 400, "Ocurrió un error al intentar convertir en JSON el registro de Orden"
-	}
-
-	return 200, string(Order)
-}
-
 /*InsertOrder es la funcion para crear en la BD el registro de orden */
 func InsertOrder(body string, User string) (int, string) {
 	var o models.Orders
@@ -92,6 +64,7 @@ func ValidOrder(o models.Orders) (bool, string) {
 func SelectOrders(user string, request events.APIGatewayV2HTTPRequest) (int, string) {
 	var err error
 	var fechaDesde, fechaHasta string
+	var orderId int
 	var page int
 
 	// Proceso los parámetros recibidos
@@ -104,8 +77,11 @@ func SelectOrders(user string, request events.APIGatewayV2HTTPRequest) (int, str
 	if len(request.QueryStringParameters["page"]) > 0 {
 		page, _ = strconv.Atoi(request.QueryStringParameters["page"])
 	}
+	if len(request.QueryStringParameters["orderId"]) > 0 {
+		orderId, _ = strconv.Atoi(request.QueryStringParameters["orderId"])
+	}
 
-	result, err2 := bd.SelectOrders(user, fechaDesde, fechaHasta, page)
+	result, err2 := bd.SelectOrders(user, fechaDesde, fechaHasta, page, orderId)
 	if err2 != nil {
 		return 400, "Ocurrió un error al intentar capturar los registros ordenes del " + fechaDesde + " al " + fechaHasta + " > " + err.Error()
 	}

@@ -53,6 +53,7 @@ func InsertOrder(o models.Orders) (int64, error) {
 	return LastInsertId, nil
 }
 
+/*
 func SelectOrder(o models.Orders) (models.Orders, error) {
 	fmt.Println("Comienza SelectOrder")
 	var Order models.Orders
@@ -102,47 +103,52 @@ func SelectOrder(o models.Orders) (models.Orders, error) {
 	fmt.Println("Select Order > Ejecución exitosa ")
 	return Order, err
 }
+*/
 
-func SelectOrders(user string, fechaDesde string, fechaHasta string, page int) ([]models.Orders, error) {
+func SelectOrders(user string, fechaDesde string, fechaHasta string, page int, orderId int) ([]models.Orders, error) {
 	fmt.Println("Comienza SelectOrders")
 	var Orders []models.Orders
-
-	offset := 0
-	if page == 0 {
-		page = 1
-	}
-	if page > 1 {
-		fmt.Println("page = " + strconv.Itoa(page))
-		offset = (10 * (page - 1))
-	}
-
-	if len(fechaHasta) == 10 {
-		fechaHasta = fechaHasta + " 23:59:59"
-	}
 
 	// Chequeamos que sea Admin quien hace la petición
 	isAdmin, _ := UserIsAdmin(user)
 
 	var sentencia string = "SELECT Order_Id, Order_UserUUID, Order_AddId, Order_Date, Order_Total FROM orders"
 
-	var where string
-	var whereUser string = " Order_UserUUID = '" + user + "'"
-	if len(fechaDesde) > 0 && len(fechaHasta) > 0 {
-		where += " WHERE Order_Date BETWEEN '" + fechaDesde + "' AND '" + fechaHasta + "'"
-	}
-	if isAdmin {
-		whereUser = ""
+	if orderId > 0 {
+		sentencia += " WHERE Order_Id = " + strconv.Itoa(orderId)
 	} else {
-		if len(where) > 0 {
-			where += " AND " + whereUser
-		} else {
-			where += whereUser
+		offset := 0
+		if page == 0 {
+			page = 1
 		}
-	}
+		if page > 1 {
+			fmt.Println("page = " + strconv.Itoa(page))
+			offset = (10 * (page - 1))
+		}
 
-	limit := " LIMIT 10 "
-	if offset > 0 {
-		limit += " OFFSET " + strconv.Itoa(offset)
+		if len(fechaHasta) == 10 {
+			fechaHasta = fechaHasta + " 23:59:59"
+		}
+
+		var where string
+		var whereUser string = " Order_UserUUID = '" + user + "'"
+		if len(fechaDesde) > 0 && len(fechaHasta) > 0 {
+			where += " WHERE Order_Date BETWEEN '" + fechaDesde + "' AND '" + fechaHasta + "'"
+		}
+		if isAdmin {
+			whereUser = ""
+		} else {
+			if len(where) > 0 {
+				where += " AND " + whereUser
+			} else {
+				where += whereUser
+			}
+		}
+
+		limit := " LIMIT 10 "
+		if offset > 0 {
+			limit += " OFFSET " + strconv.Itoa(offset)
+		}
 	}
 
 	fmt.Println(sentencia)
