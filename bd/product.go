@@ -108,7 +108,7 @@ func SelectProduct(p models.Product, choice string, page int, pageSize int, orde
 	case "C":
 		where = " WHERE Prod_CategoryId = " + strconv.Itoa(p.ProdCategId)
 	case "U":
-		where = " WHERE UCASE(Prod_Path) = LIKE '%" + strings.ToUpper(p.ProdPath) + "%'"
+		where = " WHERE UCASE(Prod_Path) LIKE '%" + strings.ToUpper(p.ProdPath) + "%'"
 	}
 
 	sentenciaCount += where
