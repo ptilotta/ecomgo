@@ -71,7 +71,7 @@ func SelectProduct(body string, request events.APIGatewayV2HTTPRequest) (int, st
 	}
 	if len(param["slug"]) > 0 {
 		choice = "U"
-		t.ProdSlug = param["slug"]
+		t.ProdPath = param["slug"]
 	}
 
 	result, err2 := bd.SelectProduct(t, choice, page, pageSize, orderType, orderField)
