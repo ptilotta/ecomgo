@@ -39,8 +39,7 @@ type Product struct {
 	ProdStock       int     `json:"prodStock"`
 	ProdCategId     int     `json:"prodCategId"`
 	ProdPath        string  `json:"prodPath"`
-	ProdSearch      string  `json:"search"`
-	ProdSlug        string  `json:"slug"`
+	ProdSearch      string  `json:"search,omitempty"`
 }
 
 type ProductResp struct {
