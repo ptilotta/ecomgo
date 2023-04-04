@@ -111,7 +111,7 @@ func SelectCategories(CategId int, Slug string) ([]models.Category, error) {
 		sentencia += "WHERE Categ_Id=" + strconv.Itoa(CategId)
 	} else {
 		if len(Slug) > 0 {
-			sentencia += "WHERE Categ_Path LIKE '%" + strconv.Itoa(CategId) + "%'"
+			sentencia += "WHERE Categ_Path LIKE '%" + Slug + "%'"
 		}
 	}
 
