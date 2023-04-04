@@ -45,6 +45,9 @@ func validoAuthorization(path string, method string, headers map[string]string) 
 		return true, 200, ""
 	}
 
+	fmt.Println("===============================================")
+	fmt.Println(" Path = " + path + " > Method = " + method)
+	fmt.Println("===============================================")
 	token := headers["authorization"]
 	if len(token) == 0 {
 		return false, 401, "Token requerido"
