@@ -76,7 +76,7 @@ func SelectProduct(body string, request events.APIGatewayV2HTTPRequest) (int, st
 	}
 	if len(param["slugCateg"]) > 0 {
 		choice = "K"
-		t.ProdCategPath = param["slugCat"]
+		t.ProdCategPath = param["slugCateg"]
 	}
 
 	fmt.Println(param)
