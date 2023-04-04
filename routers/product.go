@@ -2,6 +2,7 @@ package routers
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -78,6 +79,7 @@ func SelectProduct(body string, request events.APIGatewayV2HTTPRequest) (int, st
 		t.ProdCategPath = param["slugCat"]
 	}
 
+	fmt.Println(param)
 	result, err2 := bd.SelectProduct(t, choice, page, pageSize, orderType, orderField)
 	if err2 != nil {
 		return 400, "Ocurrió un error al intentar capturar los resultados de la búsqueda de tipo '" + choice + "' en productos > " + err.Error()
