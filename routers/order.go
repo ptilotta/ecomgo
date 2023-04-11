@@ -18,15 +18,10 @@ func InsertOrder(body string, User string) (int, string) {
 		return 400, "Error en los datos recibidos " + err.Error()
 	}
 
+	o.Order_UserUUID = User
 	OK, message := ValidOrder(o)
 	if !OK {
 		return 400, message
-	}
-
-	// Chequeamos que sea Admin quien hace la petición
-	isAdmin, msg := bd.UserIsAdmin(User)
-	if !isAdmin {
-		return 400, msg
 	}
 
 	result, err2 := bd.InsertOrder(o)

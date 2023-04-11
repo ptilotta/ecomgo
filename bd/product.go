@@ -225,41 +225,46 @@ func UpdateProduct(p models.Product) error {
 		sentencia = sentencia + " Prod_Title = '" + tools.EscapeString(p.ProdTitle) + "'"
 	}
 
-	if len(p.ProdDescription) > 0 {
-		if !strings.HasSuffix(sentencia, "SET ") {
-			sentencia = sentencia + ", "
-		}
-		sentencia = sentencia + "Prod_Description = '" + tools.EscapeString(p.ProdDescription) + "'"
-	}
+	sentencia = tools.ArmoSentencia(sentencia, "Prod_Description", "S", 0, 0, p.ProdDescription)
+	sentencia = tools.ArmoSentencia(sentencia, "Prod_Price", "F", 0, p.ProdPrice, "")
+	sentencia = tools.ArmoSentencia(sentencia, "Prod_CategoryId", "N", p.ProdCategId, 0, "")
+	sentencia = tools.ArmoSentencia(sentencia, "Prod_Stock", "N", p.ProdStock, 0, "")
+	sentencia = tools.ArmoSentencia(sentencia, "Prod_Path", "S", 0, 0, p.ProdPath)
+	/*	if len(p.ProdDescription) > 0 {
+				if !strings.HasSuffix(sentencia, "SET ") {
+					sentencia = sentencia + ", "
+				}
+				sentencia = sentencia + "Prod_Description = '" + tools.EscapeString(p.ProdDescription) + "'"
+			}
 
-	if p.ProdPrice > 0 {
-		if !strings.HasSuffix(sentencia, "SET ") {
-			sentencia = sentencia + ", "
-		}
-		sentencia = sentencia + "Prod_Price = " + strconv.FormatFloat(p.ProdPrice, 'e', -1, 64)
-	}
+			if p.ProdPrice > 0 {
+				if !strings.HasSuffix(sentencia, "SET ") {
+					sentencia = sentencia + ", "
+				}
+				sentencia = sentencia + "Prod_Price = " + strconv.FormatFloat(p.ProdPrice, 'e', -1, 64)
+			}
 
-	if p.ProdCategId > 0 {
-		if !strings.HasSuffix(sentencia, "SET ") {
-			sentencia = sentencia + ", "
-		}
-		sentencia = sentencia + "Prod_CategoryId = " + strconv.Itoa(p.ProdCategId)
-	}
+			if p.ProdCategId > 0 {
+				if !strings.HasSuffix(sentencia, "SET ") {
+					sentencia = sentencia + ", "
+				}
+				sentencia = sentencia + "Prod_CategoryId = " + strconv.Itoa(p.ProdCategId)
+			}
 
-	if p.ProdStock > 0 {
-		if !strings.HasSuffix(sentencia, "SET ") {
-			sentencia = sentencia + ", "
-		}
-		sentencia = sentencia + "Prod_Stock = " + strconv.Itoa(p.ProdStock)
-	}
+			if p.ProdStock > 0 {
+				if !strings.HasSuffix(sentencia, "SET ") {
+					sentencia = sentencia + ", "
+				}
+				sentencia = sentencia + "Prod_Stock = " + strconv.Itoa(p.ProdStock)
+			}
 
-	if len(p.ProdPath) > 0 {
-		if !strings.HasSuffix(sentencia, "SET ") {
-			sentencia = sentencia + ", "
+		if len(p.ProdPath) > 0 {
+			if !strings.HasSuffix(sentencia, "SET ") {
+				sentencia = sentencia + ", "
+			}
+			sentencia = sentencia + "Prod_Path = '" + p.ProdPath + "'"
 		}
-		sentencia = sentencia + "Prod_Path = '" + p.ProdPath + "'"
-	}
-
+	*/
 	sentencia = sentencia + " WHERE Prod_Id = " + strconv.Itoa(p.ProdID)
 
 	_, err = Db.Exec(sentencia)
