@@ -142,6 +142,8 @@ func SelectOrders(user string, fechaDesde string, fechaHasta string, page int, o
 		if offset > 0 {
 			limit += " OFFSET " + strconv.Itoa(offset)
 		}
+
+		sentencia += where + limit
 	}
 
 	fmt.Println(sentencia)
