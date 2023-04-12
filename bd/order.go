@@ -109,9 +109,6 @@ func SelectOrders(user string, fechaDesde string, fechaHasta string, page int, o
 	fmt.Println("Comienza SelectOrders")
 	var Orders []models.Orders
 
-	// Chequeamos que sea Admin quien hace la petición
-	isAdmin, _ := UserIsAdmin(user)
-
 	var sentencia string = "SELECT Order_Id, Order_UserUUID, Order_AddId, Order_Date, Order_Total FROM orders"
 
 	if orderId > 0 {
@@ -135,14 +132,10 @@ func SelectOrders(user string, fechaDesde string, fechaHasta string, page int, o
 		if len(fechaDesde) > 0 && len(fechaHasta) > 0 {
 			where += " WHERE Order_Date BETWEEN '" + fechaDesde + "' AND '" + fechaHasta + "'"
 		}
-		if isAdmin {
-			whereUser = ""
+		if len(where) > 0 {
+			where += " AND " + whereUser
 		} else {
-			if len(where) > 0 {
-				where += " AND " + whereUser
-			} else {
-				where += whereUser
-			}
+			where += whereUser
 		}
 
 		limit := " LIMIT 10 "
