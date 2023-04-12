@@ -135,7 +135,7 @@ func SelectOrders(user string, fechaDesde string, fechaHasta string, page int, o
 		if len(where) > 0 {
 			where += " AND " + whereUser
 		} else {
-			where += whereUser
+			where += " WHERE " + whereUser
 		}
 
 		limit := " LIMIT 10 "
